@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/books', 'HomeController@getTheMostDiscountBooks');
+Route::get('/books/{id}', 'HomeController@getById');
+//get all
+Route::get('/getAll', 'HomeController@getAll');
+Route::get('/getTheMostRatingStartsBooks','HomeController@getTheMostRatingStartsBooks');
