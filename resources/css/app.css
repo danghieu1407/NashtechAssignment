@@ -1,35 +1,24 @@
-body {
-    font-family: 'Nunito', sans-serif;
-    padding: 0;
-    margin: 0;
+
+/* logo o day ne */
+#logo32 {
+    margin-right: 10px;
+    margin-top: 0px;
+}
+#logoName{
+    margin-left: 90px;
+    margin-top: 3px;
 }
 
-main {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgb(247, 250, 252);
+#navbar{
+    background: #2596be ;
 }
 
-.welcome-text {
-    color: #f75454;
-    font-weight: 600;
-    font-size: 2rem;
-    -webkit-font-smoothing: antialiased;
-    padding: 100px;
-    border: 5px solid #f75454;
+
+#nav-link{
+    margin-left: 1400px;
+    font-size: 20px;
+    margin-top: 0px;
+
+    
 }
 
-.welcome-text > span {
-    font-size: 2.1rem;
-    text-shadow: 3px 3px #fbbcbc;
-}
-
-.small-welcome-text {
-    color: #f75454;
-    font-size: 0.5rem;
-    font-weight: bold;
-    margin-left: 6px;
-    margin-bottom: 1px;
-}

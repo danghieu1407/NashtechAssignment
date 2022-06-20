@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Welcome from './welcome';
+import Layout from './components/Layout';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
-  <Welcome/>,
+  <div>
+  <Layout />
+
+  </div>,
+
   document.getElementById('root')
 );
