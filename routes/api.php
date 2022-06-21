@@ -17,9 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+//home controller
 Route::get('/books', 'HomeController@getTheMostDiscountBooks');
 Route::get('/books/{id}', 'HomeController@getById');
-//get all
 Route::get('/getAll', 'HomeController@getAll');
 Route::get('/getTheMostRatingStartsBooks','HomeController@getTheMostRatingStartsBooks');
+Route::get('/getTheMostReviewBooks','HomeController@getTheMostReviewBooks');
+Route::get('/checkDiscount','HomeController@checkDiscount');
+
+
+//shop Controller
+Route::get('/sortByCategoryName/{name}', 'ShopController@sortByCategoryName');
+Route::get('/sortByAuthor/{name}/{pageIndex}/{limit}', 'ShopController@sortByAuthor');
+Route::get('/sortByRattingReview/{star}', 'ShopController@sortByRattingReview');
+
+

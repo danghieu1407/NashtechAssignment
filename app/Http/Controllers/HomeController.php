@@ -47,11 +47,22 @@ class HomeController extends Controller
         return $books;
     
     }
+    public function getTheMostReviewBooks()
+    {
+        $books = $this->bookRepository->getTheMostReviewBooks();
+        return $books;
+    }
 
     public function getTheMostRatingStartsBooks()
     {
         $books = $this->bookRepository->getTheMostRatingStartsBooks();
         return $books;
     }
+
+
+
+    
+
+
 
 }
