@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 use App\Models\Book;
 use App\Models\Discount;
-
+use DB;
 use Illuminate\Http\Request;
 
 
@@ -59,7 +59,7 @@ class BookRepository implements BaseInterface
         
         ->where('discount.discount_start_date', '<=', date('Y-m-d'))
         ->where('discount.discount_end_date', '>=', date('Y-m-d')) 
-        ->orWhereNull('discount.discount__date')
+        ->orWhereNull('discount.discount_end_date')
         ->orderBy('sub_price', 'desc')
         ->limit(10)
         ->get();
@@ -71,36 +71,51 @@ class BookRepository implements BaseInterface
 
 
     public function getTheMostRatingStartsBooks()
-    {   
-        //get discount price in $discount_price
-    
+    {       
         $date = date('Y-m-d');
         $books = $this->bookModel
         ->join('review','book.id','=','review.book_id')
-        ->selectRaw('book.*,round(avg(rating_star),2) as avg_rating_star')
-        ->selectRaw('discount.*, book.*,(book.book_price - discount.discount_price) as sub_price')
-        ->selectRaw("book.*, 
+     
+        ->selectRaw("book.*,round(avg(rating_star),2) as avg_rating_star,
         (CASE WHEN  
+        EXISTS (
+            SELECT discount.discount_price FROM discount 
+            WHERE discount.book_id = book.id 
+        
+        )
+        THEN (
+         CASE WHEN
             EXISTS (
                 SELECT discount.discount_price FROM discount 
                 WHERE discount.book_id = book.id 
                 AND discount.discount_start_date <= '$date'
-                AND discount.discount_end_date >= '$date'
-                
+                AND (discount.discount_end_date >= '$date'
+                OR discount.discount_end_date IS NULL)
             )
             THEN (
-                 book.book_price 
+                SELECT discount.discount_price FROM discount
+                WHERE discount.book_id = book.id
+                AND discount.discount_start_date <= '$date'
+                AND (discount.discount_end_date >= '$date'
+                OR discount.discount_end_date IS NULL)
             )
             ELSE (
-                sub_price
+                book.book_price
             )
             END
-            ) as finalprice"
+            
+        
+             
+        )
+        ELSE (
+            book.book_price
+        )
+        END) as finalprice"
             )
         ->groupBy('book.id')
         ->orderBy('avg_rating_star','desc')
         ->orderBy('finalprice','asc')
-        ->limit(10)
+        ->limit(8)
         ->get();
             
         return  $books;
@@ -110,11 +125,51 @@ class BookRepository implements BaseInterface
     {
         // Popular: get top 8 books with most reviews - total 
         // number review of a book and lowest final price
+        $date = date('Y-m-d');
+
         $books = $this->bookModel
         ->join('review','book.id','=','review.book_id')
-        ->selectRaw('book.*,count(review.id) as total_review')
+        // ->selectRaw('book.*,count(review.id) as total_review')
+        ->selectRaw("book.* ,count(review.id) as total_review,
+        (CASE WHEN  
+            EXISTS (
+                SELECT discount.discount_price FROM discount 
+                WHERE discount.book_id = book.id 
+            
+            )
+            THEN (
+             CASE WHEN
+                EXISTS (
+                    SELECT discount.discount_price FROM discount 
+                    WHERE discount.book_id = book.id 
+                    AND discount.discount_start_date <= '$date'
+                    AND (discount.discount_end_date >= '$date'
+                    OR discount.discount_end_date IS NULL)
+                )
+                THEN (
+                    SELECT discount.discount_price FROM discount
+                    WHERE discount.book_id = book.id
+                    AND discount.discount_start_date <= '$date'
+                    AND (discount.discount_end_date >= '$date'
+                    OR discount.discount_end_date IS NULL)
+                )
+                ELSE (
+                    book.book_price
+                )
+                END
+                
+            
+                 
+            )
+            ELSE (
+                book.book_price
+            )
+            END) as finalprice"
+        
+        )
         ->groupBy('book.id')
         ->orderBy('total_review','desc')
+        ->orderBy('finalprice','asc')
         ->limit(8)
         ->get();
         return  $books;

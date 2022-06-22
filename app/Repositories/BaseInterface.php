@@ -1,7 +1,7 @@
 <?php 
 namespace App\Repositories;
 
-interface BookInterface{
+interface BaseInterface{
     public function getAll();
     public function getById($id);
     public function create($data);
