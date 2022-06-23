@@ -78,7 +78,6 @@ class BookRepository implements BaseInterface
 
     public function getTheMostDiscountBooks()
     {
-        $date = date('Y-m-d');
         $finalPrice = $this->finalPrice();
         $books = $this->bookModel
             ->joinSub($finalPrice, 'check_final_price', function ($join) {
@@ -103,7 +102,7 @@ class BookRepository implements BaseInterface
         //ví dụ: 1 rate 2sao, 3 rate 5 sao => (số lượng rate x số sao + số lượng rate x số sao) : count = 17:4
         $calculate = $this->bookModel
         ->join('review', 'book.id', '=', 'review.book_id')
-        ->selectRaw('book.id, round(count(review.id),2) as count, round(sum(review.rating_star),2) as sum')
+        ->selectRaw('book.id, round(count(review.id),0) as count, round(sum(review.rating_star),0) as sum')
         ->groupBy('book.id');
 
         $result = $this->bookModel
@@ -111,7 +110,7 @@ class BookRepository implements BaseInterface
             $join->on('book.id', '=', 'calculate.id');
         })
         ->select('book.*', 'calculate.count', 'calculate.sum')
-        ->selectRaw('round(calculate.sum/calculate.count,2) as rating')
+        ->selectRaw('round(calculate.sum/calculate.count,0) as rating')
 
         ->orderBy( 'rating', 'desc');
 
@@ -171,7 +170,7 @@ class BookRepository implements BaseInterface
             ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
                 $join->on('book.id', '=', 'check_final_price.id');
             })
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'category_name');
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'category_name','author.author_name','book.book_title');
         
 
         $items = $books->offset($offset)->limit($limit)->get();
@@ -211,18 +210,40 @@ class BookRepository implements BaseInterface
             'limit' => $limit,
         ];
     }
-    public function sortByRattingReview($star)
+    public function sortByRattingReview($star , Request $params)
     {
+        //pagination
+        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
+        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
+        $offset = ($pageIndex - 1) * $limit;
 
+        
+        $books = $this->bookModel;
+        $finalPrice = $this->finalPrice();
+        $ratingStar = $this->calculateRating();
         $books = $this->bookModel
-            ->join('review', 'book.id', '=', 'review.book_id')
-            ->selectRaw('book.*,avg(rating_star) as avg_rating_star')
-            ->groupBy('book.id')
-            ->orderBy('avg_rating_star', 'desc')
-            ->limit(10)
-            ->get();
-        return  $books;
-    }
+            ->joinSub($finalPrice, 'check_final_price', function ($join) {
+                $join->on('book.id', '=', 'check_final_price.id');
+            })
+            ->joinSub($ratingStar, 'calculate', function ($join) {
+                $join->on('book.id', '=', 'calculate.id');
+            })
+            ->join('author', 'book.author_id', '=', 'author.id')
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'calculate.count', 'calculate.sum', 'calculate.rating');
 
+            
+
+        $books = $books->where('calculate.rating', '=', $star);
+
+        $items = $books->offset($offset)->limit($limit)->get();
+
+        return [
+            'items' => $items,
+            'total' => $books->count(),
+            'pageIndex' => $pageIndex,
+            'limit' => $limit,
+        ];
+
+    }
 
 }

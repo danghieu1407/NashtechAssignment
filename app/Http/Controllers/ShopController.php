@@ -23,8 +23,8 @@ class ShopController extends Controller
         return $books;
     }
 
-    public function sortByRattingReview($star){
-        $books = $this->bookRepository->sortByRattingReview($star);
+    public function sortByRattingReview($star, Request $params){
+        $books = $this->bookRepository->sortByRattingReview($star, $params);
         return $books;
     }
 
