@@ -31,7 +31,7 @@ Route::get('/checkDiscount','HomeController@checkDiscount');
 
 
 //shop Controller
-Route::get('/sortByCategoryName/{name}/{pageIndex}/{limit}', 'ShopController@sortByCategoryName');
+Route::get('/sortByCategoryName/{name}', 'ShopController@sortByCategoryName');
 Route::get('/sortByAuthor/{name}/{pageIndex}/{limit}', 'ShopController@sortByAuthor');
 Route::get('/sortByRattingReview/{star}', 'ShopController@sortByRattingReview');
 

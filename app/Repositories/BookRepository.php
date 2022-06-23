@@ -149,64 +149,30 @@ class BookRepository implements BaseInterface
             ->selectRaw('book.*,count(review.id) as total_review')
             ->groupBy('book.id', 'check_final_price.id' ,'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
             ->orderBy('total_review', 'desc')
+            ->orderBy('final_price', 'asc')
             
             ->limit(8)
             ->get();
         return  $books;
     }
 
-    public function sortByCategoryName($name,  Request $params)
+    public function sortByCategoryName($name, Request $params)
     {
-        $date = date('Y-m-d');
-        //pagination
-        $pageIndex = $pageIndex ?? self::PAGE_INDEX_DEFAULT;
-
-        $limit = $limit ?? self::LIMIT_DEFAULT;
+        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
+        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
         $offset = ($pageIndex - 1) * $limit;
 
         // sort product  by category name
         $books = $this->bookModel
             ->join('category', 'category.id', '=', 'book.category_id')
+            ->join('author', 'book.author_id', '=', 'author.id')
             ->select('book.*', 'category_name')
             ->where('category_name', '=', $name)
-            ->selectRaw(
-                "book.* ,
-        (CASE WHEN  
-            EXISTS (
-                SELECT discount.discount_price FROM discount 
-                WHERE discount.book_id = book.id 
-            
-            )
-            THEN (
-             CASE WHEN
-                EXISTS (
-                    SELECT discount.discount_price FROM discount 
-                    WHERE discount.book_id = book.id 
-                    AND discount.discount_start_date <= '$date'
-                    AND (discount.discount_end_date >= '$date'
-                    OR discount.discount_end_date IS NULL)
-                )
-                THEN (
-                    SELECT discount.discount_price FROM discount
-                    WHERE discount.book_id = book.id
-                    AND discount.discount_start_date <= '$date'
-                    AND (discount.discount_end_date >= '$date'
-                    OR discount.discount_end_date IS NULL)
-                )
-                ELSE (
-                    book.book_price
-                )
-                END
-            
-            )
-            ELSE (
-                book.book_price
-            )
-            END) as finalprice"
-
-            );
-
-
+            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
+                $join->on('book.id', '=', 'check_final_price.id');
+            })
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'category_name');
+        
 
         $items = $books->offset($offset)->limit($limit)->get();
 
