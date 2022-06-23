@@ -184,20 +184,23 @@ class BookRepository implements BaseInterface
         ];
     }
 
-    public function sortByAuthor($name, $pageIndex, $limit)
+    public function sortByAuthor($name, Request $params)
     {
         //pagination
-        $pageIndex = $pageIndex ?? self::PAGE_INDEX_DEFAULT;
-
-        $limit = $limit ?? self::LIMIT_DEFAULT;
+        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
+        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
         $offset = ($pageIndex - 1) * $limit;
-
         // sort by author name
 
         $books = $this->bookModel
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select('book.*', 'author.author_name')
-            ->where('author.author_name', '=', $name);
+            ->where('author.author_name', '=', $name)
+            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
+                $join->on('book.id', '=', 'check_final_price.id');
+            })
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'author.author_name');
+
 
         $items = $books->offset($offset)->limit($limit)->get();
 
@@ -221,15 +224,5 @@ class BookRepository implements BaseInterface
         return  $books;
     }
 
-    public function checkDiscount()
-    {
-        $now = date('Y-m-d');
-        $books = $this->bookModel
-            ->join('discount', 'book.id', '=', 'discount.book_id')
-            ->selectRaw('book.*', 'discount.*', `IF(discount_start_date <=  {$now} && discount_end_date >=  {$now} ,  book.book_price - discount.discount_prince as total , book.book_price as total) as sub_price`)
-            ->orderBy('sub_price', 'desc')
-            ->limit(10)
-            ->get();
-        return  $books;
-    }
+
 }
