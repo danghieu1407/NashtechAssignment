@@ -246,4 +246,49 @@ class BookRepository implements BaseInterface
 
     }
 
+    public function sortByPriceDes(Request $params){
+        //pagination
+        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
+        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
+        $offset = ($pageIndex - 1) * $limit;        
+        $books = $this->bookModel
+            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
+                $join->on('book.id', '=', 'check_final_price.id');
+            })
+            ->join('author', 'book.author_id', '=', 'author.id')
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
+            ->orderBy('final_price', 'desc');
+            $items = $books->offset($offset)->limit($limit)->get();
+
+            return [
+                'items' => $items,
+                'total' => $books->count(),
+                'pageIndex' => $pageIndex,
+                'limit' => $limit,
+            ];
+       
+    }
+
+    public function sortByPriceAsc(Request $params){
+         //pagination
+        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
+        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
+        $offset = ($pageIndex - 1) * $limit;
+        $books = $this->bookModel
+            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
+                $join->on('book.id', '=', 'check_final_price.id');
+            })
+            ->join('author', 'book.author_id', '=', 'author.id')
+            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
+            ->orderBy('final_price', 'asc'); 
+            $items = $books->offset($offset)->limit($limit)->get();
+
+            return [
+                'items' => $items,
+                'total' => $books->count(),
+                'pageIndex' => $pageIndex,
+                'limit' => $limit,
+            ];
+    }
+
 }

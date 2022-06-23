@@ -27,5 +27,15 @@ class ShopController extends Controller
         $books = $this->bookRepository->sortByRattingReview($star, $params);
         return $books;
     }
+    
+    public function sortByPriceDes(Request $params){
+        $books = $this->bookRepository->sortByPriceDes($params);
+        return $books;
+    }
+
+    public function sortByPriceAsc(Request $params){
+        $books = $this->bookRepository->sortByPriceAsc($params);
+        return $books;
+    }
 
 }
