@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {MdPlayArrow} from 'react-icons/md';
 import CardBook from "../Card/CardBook";
 import bookimage from "../../../assets/bookcover/book1.jpg";
+import axios from "axios";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -14,12 +15,27 @@ import "swiper/css/scrollbar";
 import "../../../css/app.css";
 
 class OnSale extends React.Component {
+  state = {
+    data: []
+  }
+
+    componentDidMount() {
+      axios.get(`http://localhost:8000/api/books`)
+        .then(res => {
+          const data = res.data;
+          console.log(data);
+          this.setState({ data });
+        })
+        .catch(error => console.log(error));
+    }
+
   render() {
     return (
     <Container className="container"  fixed>
+   <br></br>
         <div>
         <h1>OnSale   <Button className="view-all">View All <MdPlayArrow></MdPlayArrow></Button></h1>
-        
+      
         </div> 
       <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
@@ -30,27 +46,11 @@ class OnSale extends React.Component {
             onSlideChange={() => console.log("slide change")}
             onSwiper={(swiper) => console.log(swiper)}
       >
-
-        <SwiperSlide>
-          <CardBook/>
+     {this.state.data.map((item, idx) => (
+      <SwiperSlide>
+          <CardBook author={item.author_name} title={item.book_title} img={item.book_cover_photo} original_price={item.book_price} discount_price={item.final_price}  />
         </SwiperSlide>
-
-        <SwiperSlide>
-          <CardBook/>
-        </SwiperSlide>
-        
-        <SwiperSlide>
-          <CardBook/>
-        </SwiperSlide>
-        
-        <SwiperSlide>
-          <CardBook/>
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <CardBook/>
-        </SwiperSlide>
- 
+        ))}
       </Swiper>
       </Container>
 

@@ -11,11 +11,13 @@ class HeaderLogo extends React.Component {
       <Navbar bg="" variant="dark" id="navbar" >
       <Navbar.Brand href="#home" id="logoName">
       <img id="logo32"  src={logo32 } width="auto" height= "40px" alt=""/>
-      BOOKWORM
+         BOOKWORM
+    
+
       </Navbar.Brand>
       <HeaderMenu/>
-
       </Navbar>
+ 
       </div>
     
     );
