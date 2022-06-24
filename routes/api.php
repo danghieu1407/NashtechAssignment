@@ -32,7 +32,7 @@ Route::get('/checkDiscount','HomeController@checkDiscount');
 
 //shop Controller
 Route::get('/sortByCategoryName/{name}', 'ShopController@sortByCategoryName');
-Route::get('/sortByAuthor/{name}', 'ShopController@sortByAuthor');
+Route::get('/filterByAuthor', 'ShopController@filterByAuthor');
 Route::get('/sortByRattingReview/{star}', 'ShopController@sortByRattingReview');
 Route::get('/sortByPriceDes', 'ShopController@sortByPriceDes');
 Route::get('/sortByPriceAsc', 'ShopController@sortByPriceAsc');

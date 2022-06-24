@@ -18,8 +18,8 @@ class ShopController extends Controller
         $books = $this->bookRepository->sortByCategoryName($name, $params);
         return $books;
     }
-    public function sortByAuthor($name, Request $params){
-        $books = $this->bookRepository->sortByAuthor($name, $params);
+    public function filterByAuthor( Request $params){
+        $books = $this->bookRepository->filterByAuthor($params);
         return $books;
     }
 
