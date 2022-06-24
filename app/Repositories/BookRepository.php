@@ -117,10 +117,9 @@ class BookRepository implements BaseInterface
         ->join('review', 'book.id', '=', 'review.book_id')
         ->selectRaw('book.id, round(count(review.id),0) as count, round(sum(review.rating_star),0) as sum')
         ->groupBy('book.id');
-
         $result = $this->bookModel
         ->joinSub($calculate, 'calculate', function ($join) {
-            $join->on('book.id', '=', 'calculate.id');
+                    $join->on('book.id', '=', 'calculate.id');
         })
         ->select('book.*', 'calculate.count', 'calculate.sum')
         ->selectRaw('round(calculate.sum/calculate.count,0) as rating')
@@ -296,7 +295,7 @@ class BookRepository implements BaseInterface
             'limit' => $limit,
         ];
     }
-    public function sortByRattingReview($star , Request $params)
+    public function filterByRattingReview(Request $params)
     {
         //pagination
         $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
@@ -308,6 +307,7 @@ class BookRepository implements BaseInterface
         $finalPrice = $this->finalPrice();
         $ratingStar = $this->calculateRating();
         $books = $this->bookModel
+            ->where('calculate.rating', '=', $params['rating_star'])
             ->joinSub($finalPrice, 'check_final_price', function ($join) {
                 $join->on('book.id', '=', 'check_final_price.id');
             })
@@ -315,11 +315,51 @@ class BookRepository implements BaseInterface
                 $join->on('book.id', '=', 'calculate.id');
             })
             ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'calculate.count', 'calculate.sum', 'calculate.rating');
-
+            ->select(
+                'check_final_price.id', 
+                'check_final_price.book_price', 
+                'check_final_price.book_cover_photo',
+                'check_final_price.discount_price', 
+                'check_final_price.discount_start_date',
+                'check_final_price.discount_end_date', 
+                'author.author_name', 
+                'check_final_price.final_price', 
+                'calculate.count', 
+                'calculate.sum', 
+                'calculate.rating');
             
+            if(isset($params['sort_by_on_sale'])){
+                $books
+                ->where('check_final_price.discount_price', '!=', null)
+                ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
+                ->orderBy('check_final_price.final_price', 'asc');
+            }       
+            if(isset($params['sort_by_popular'])){
+                $books 
+                ->join('review', 'review.book_id', '=', 'book.id')
+                ->selectRaw('book.id,count(review.id) as total_review')
+                ->groupBy(
+                    'book.id', 
+                    'check_final_price.id' ,
+                    'check_final_price.book_price',
+                    'check_final_price.book_cover_photo',
+                    'check_final_price.discount_price', 
+                    'check_final_price.discount_start_date', 
+                    'check_final_price.discount_end_date',
+                    'author.author_name', 
+                    'check_final_price.final_price')
+                ->orderBy('check_final_price.final_price', 'asc')
+                ->orderBy('total_review', 'desc');
+            }
+            if(isset($params['sort_by_price_asc'])){
+                $books->orderBy('check_final_price.final_price', 'asc');
+            }
+            if(isset($params['sort_by_price_desc'])){
+                $books->orderBy('check_final_price.final_price', 'desc');
+            }
 
-        $books = $books->where('calculate.rating', '=', $star);
+
+        
 
         $items = $books->offset($offset)->limit($limit)->get();
 

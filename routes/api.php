@@ -31,7 +31,7 @@ Route::get('/checkDiscount','HomeController@checkDiscount');
 //shop Controller
 Route::get('/filterByCategoryName', 'ShopController@filterByCategoryName');
 Route::get('/filterByAuthor', 'ShopController@filterByAuthor');
-Route::get('/sortByRattingReview/{star}', 'ShopController@sortByRattingReview');
+Route::get('/filterByRattingReview', 'ShopController@filterByRattingReview');
 Route::get('/sortByPriceDes', 'ShopController@sortByPriceDes');
 Route::get('/sortByPriceAsc', 'ShopController@sortByPriceAsc');
 
