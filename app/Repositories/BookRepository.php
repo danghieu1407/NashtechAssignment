@@ -57,6 +57,10 @@ class BookRepository implements BaseInterface
             WHEN discount.discount_price IS NULL 
             THEN book.book_price
 
+            WHEN discount.discount_price IS NOT NULL
+            AND discount.discount_end_date < ?
+            THEN book_price
+            
             WHEN  discount.discount_price IS NOT NULL
             AND discount.discount_start_date <= ?
             THEN discount_price
@@ -71,8 +75,10 @@ class BookRepository implements BaseInterface
             AND ( discount.discount_end_date > ? OR discount.discount_end_date IS NULL)
             THEN discount_price
 
+      
+
             ELSE book.book_price
-            END) AS final_price', [$date, $date, $date, $date]);
+            END) AS final_price', [$date, $date, $date, $date, $date]);
     }
     //10 Books on Sale
     public function getTheMostDiscountBooks()
@@ -83,7 +89,15 @@ class BookRepository implements BaseInterface
                 $join->on('book.id', '=', 'check_final_price.id');
             })
             ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
+            ->select(
+            'check_final_price.id', 
+            'check_final_price.book_price', 
+            'check_final_price.book_cover_photo',
+            'check_final_price.discount_price', 
+            'check_final_price.discount_start_date', 
+            'check_final_price.discount_end_date', 
+            'author.author_name', 
+            'check_final_price.final_price')
             ->selectRaw('book.book_price - check_final_price.discount_price as subprice')
             ->where('check_final_price.discount_price', '!=', null)
             ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
@@ -128,7 +142,8 @@ class BookRepository implements BaseInterface
                 $join->on('book.id', '=', 'calculate.id');
             })
             ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'calculate.count', 'calculate.sum', 'calculate.rating')
+            ->select(
+                'check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'calculate.count', 'calculate.sum', 'calculate.rating')
             ->get();
         return  $books;
     }
@@ -153,7 +168,7 @@ class BookRepository implements BaseInterface
         return  $books;
     }
 
-    public function sortByCategoryName($name, Request $params)
+    public function filterByCategoryName( Request $params)
     {
         $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
         $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
@@ -164,12 +179,50 @@ class BookRepository implements BaseInterface
             ->join('category', 'category.id', '=', 'book.category_id')
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select('book.*', 'category_name')
-            ->where('category_name', '=', $name)
+            ->where('category_name', '=', $params['category_name'])
             ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
                 $join->on('book.id', '=', 'check_final_price.id');
             })
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'category_name','author.author_name','book.book_title');
-        
+            ->select(
+                'check_final_price.id',
+                'check_final_price.book_price',
+                'check_final_price.book_cover_photo',
+                'check_final_price.discount_price',
+                'check_final_price.discount_start_date', 
+                'check_final_price.discount_end_date', 
+                'author.author_name', 
+                'check_final_price.final_price', 
+                'category_name','author.author_name',
+                'book.book_title');
+            if(isset($params['sort_by_on_sale'])){
+                $books
+                ->where('check_final_price.discount_price', '!=', null)
+                ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
+                ->orderBy('check_final_price.final_price', 'asc');
+            }       
+            if(isset($params['sort_by_popular'])){
+                $books 
+                ->join('review', 'review.book_id', '=', 'book.id')
+                ->selectRaw('book.id,count(review.id) as total_review')
+                ->groupBy(
+                    'book.id', 
+                    'check_final_price.id' ,
+                    'check_final_price.book_price',
+                    'check_final_price.book_cover_photo',
+                    'check_final_price.discount_price', 
+                    'check_final_price.discount_start_date', 
+                    'check_final_price.discount_end_date',
+                    'author.author_name', 
+                    'check_final_price.final_price')
+                ->orderBy('check_final_price.final_price', 'asc')
+                ->orderBy('total_review', 'desc');
+            }
+            if(isset($params['sort_by_price_asc'])){
+                $books->orderBy('check_final_price.final_price', 'asc');
+            }
+            if(isset($params['sort_by_price_desc'])){
+                $books->orderBy('check_final_price.final_price', 'desc');
+            }
 
         $items = $books->offset($offset)->limit($limit)->get();
 
