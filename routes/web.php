@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/ShopPage', function (){
+    return view('welcome');
+});
+
 
 
 

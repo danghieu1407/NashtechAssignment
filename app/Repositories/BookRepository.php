@@ -51,7 +51,7 @@ class BookRepository implements BaseInterface
         $date = date('Y-m-d');
         return $this->bookModel
             ->leftJoin('discount', 'book.id', '=', 'discount.book_id')
-            ->select('book.id', 'book.book_price', 'book.book_cover_photo', 'discount.discount_price', 'discount.discount_start_date', 'discount.discount_end_date')
+            ->select('book.id', 'book.book_title','book.book_price', 'book.book_cover_photo', 'discount.discount_price', 'discount.discount_start_date', 'discount.discount_end_date')
             ->selectRaw('
         (CASE 
             WHEN discount.discount_price IS NULL 
@@ -91,6 +91,7 @@ class BookRepository implements BaseInterface
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select(
             'check_final_price.id', 
+            'check_final_price.book_title',
             'check_final_price.book_price', 
             'check_final_price.book_cover_photo',
             'check_final_price.discount_price', 
@@ -143,6 +144,7 @@ class BookRepository implements BaseInterface
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select(
                 'check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price', 'calculate.count', 'calculate.sum', 'calculate.rating')
+            ->limit(8)
             ->get();
         return  $books;
     }

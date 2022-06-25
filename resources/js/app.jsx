@@ -1,18 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Header from './components/Header/Header';
-import HomePage from './components/HomePage/HomePage';
-import Footer from './components/Footer/Footer';
+import HomePage from './pages/HomePage';
+import ShopPage from './pages/ShopPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
-  <div>
-  <Header />
-  <HomePage />
-  <Footer />
+    <Router>
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/ShopPage" element={<ShopPage />} />
 
-  </div>,
+    
+        </Routes>
+    </Router>,
 
   document.getElementById('root')
 );

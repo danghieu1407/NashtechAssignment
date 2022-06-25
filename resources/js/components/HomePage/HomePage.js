@@ -2,7 +2,7 @@ import React from "react";
 import FeaturedBooks from "./FeaturedBooks";
 import OnSale from "./OnSale";
 
-class HomePage extends React.Component {
+class HomePageBody extends React.Component {
     render() {
         return (
 
@@ -16,4 +16,4 @@ class HomePage extends React.Component {
         );
     }
 }
-export default HomePage;
+export default HomePageBody;
