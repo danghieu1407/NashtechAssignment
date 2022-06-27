@@ -57,7 +57,9 @@ class FeaturedBooks extends React.Component {
     render() {
         return (
             <div id="container-featured" className="container">
-
+                <div className="row">
+                
+                </div>
                 <div className="row">
                     <div className="col-md-12"  >
                         <h1 className="Featured-title">Featured Books</h1>
