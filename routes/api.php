@@ -34,6 +34,10 @@ Route::get('/filterByAuthor', 'ShopController@filterByAuthor');
 Route::get('/filterByRattingReview', 'ShopController@filterByRattingReview');
 Route::get('/sortByPriceDes', 'ShopController@sortByPriceDes');
 Route::get('/sortByPriceAsc', 'ShopController@sortByPriceAsc');
+Route::get('/getAll', 'ShopController@getAllCategoryName');
+Route::get('/getAllAuthorName', 'ShopController@getAllAuthorName');
+
+
 
 
 

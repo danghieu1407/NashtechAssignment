@@ -420,5 +420,4 @@ class BookRepository implements BaseInterface
                 'limit' => $limit,
             ];
     }
-
 }
