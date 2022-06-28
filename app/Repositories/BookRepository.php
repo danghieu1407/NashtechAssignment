@@ -169,37 +169,66 @@ class BookRepository implements BaseInterface
         return  $books;
     }
 
-    public function filterByCategoryName( Request $params)
+    public function filterByCategoryName_Author_RatingReview( Request $params)
     {
         $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
         $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
         $offset = ($pageIndex - 1) * $limit;
 
-        // sort product  by category name
         $books = $this->bookModel
             ->join('category', 'category.id', '=', 'book.category_id')
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select('book.*', 'category_name')
-            ->where('category_name', '=', $params['category_name'])
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
+            ->where('category_name', '=', $params['category_name']);
+            if(isset($params['author_name'])){
+                $books -> where('author_name', '=', $params['author_name']);
+            }
+            if(isset($params['rating_star'])){
+                $ratingStar = $this->calculateRating();
+                $books ->where('calculate.rating', '=', $params['rating_star'])
+                ->joinSub($ratingStar, 'calculate', function ($join) {
+                    $join->on('book.id', '=', 'calculate.id');
+                });
+            }
+           
+            $books ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
                 $join->on('book.id', '=', 'check_final_price.id');
-            })
-            ->select(
-                'check_final_price.id',
-                'check_final_price.book_price',
-                'check_final_price.book_cover_photo',
-                'check_final_price.discount_price',
-                'check_final_price.discount_start_date', 
-                'check_final_price.discount_end_date', 
-                'author.author_name', 
-                'check_final_price.final_price', 
-                'category_name','author.author_name',
-                'book.book_title');
+            });
+            if(isset($params['rating_star'])){
+            $books->select(
+                    'check_final_price.id', 
+                    'check_final_price.book_price', 
+                    'check_final_price.book_cover_photo',
+                    'check_final_price.discount_price', 
+                    'check_final_price.discount_start_date',
+                    'check_final_price.discount_end_date', 
+                    'author.author_name', 
+                    'check_final_price.final_price', 
+                    'calculate.count', 
+                    'calculate.sum', 
+                    'calculate.rating');
+            }
+            else{
+            $books ->select(
+                    'check_final_price.id',
+                    'check_final_price.book_price',
+                    'check_final_price.book_cover_photo',
+                    'check_final_price.discount_price',
+                    'check_final_price.discount_start_date', 
+                    'check_final_price.discount_end_date', 
+                    'author.author_name', 
+                    'check_final_price.final_price', 
+                    'category_name','author.author_name',
+                    'book.book_title',);
+            }
+         
             if(isset($params['sort_by_on_sale'])){
                 $books
                 ->where('check_final_price.discount_price', '!=', null)
                 ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
-                ->orderBy('check_final_price.final_price', 'asc');
+                ->orderBy('check_final_price.final_price', 'asc')
+                ->orderBy('check_final_price.discount_price', 'desc');
+
             }       
             if(isset($params['sort_by_popular'])){
                 $books 
@@ -235,189 +264,4 @@ class BookRepository implements BaseInterface
         ];
     }
 
-    public function filterByAuthor(Request $params)
-    {
-        //pagination
-        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
-        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
-        $offset = ($pageIndex - 1) * $limit;
-   
-        $books = $this->bookModel
-            ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('book.*', 'author.author_name')
-            ->where('author.author_name', '=', $params['author_name'])
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
-            ->select(
-            'check_final_price.id', 
-            'check_final_price.book_price', 
-            'check_final_price.book_cover_photo',
-            'check_final_price.discount_price', 
-            'check_final_price.discount_start_date', 
-            'check_final_price.discount_end_date', 
-            'author.author_name', 
-            'check_final_price.final_price');
-        if(isset($params['sort_by_on_sale'])){
-            $books
-            ->where('check_final_price.discount_price', '!=', null)
-            ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
-            ->orderBy('check_final_price.final_price', 'asc');
-        }       
-        if(isset($params['sort_by_popular'])){
-            $books 
-            ->join('review', 'review.book_id', '=', 'book.id')
-            ->selectRaw('book.id,count(review.id) as total_review')
-            ->groupBy(
-                'book.id', 
-                'check_final_price.id' ,
-                'check_final_price.book_price',
-                'check_final_price.book_cover_photo',
-                'check_final_price.discount_price', 
-                'check_final_price.discount_start_date', 
-                'check_final_price.discount_end_date',
-                'author.author_name', 
-                'check_final_price.final_price')
-            ->orderBy('check_final_price.final_price', 'asc')
-            ->orderBy('total_review', 'desc');
-        }
-        if(isset($params['sort_by_price_asc'])){
-            $books->orderBy('check_final_price.final_price', 'asc');
-        }
-        if(isset($params['sort_by_price_desc'])){
-            $books->orderBy('check_final_price.final_price', 'desc');
-        }
-
-        $items = $books->offset($offset)->limit($limit)->get();
-
-        return [
-            'items' => $items,
-            'total' => $books->count(),
-            'pageIndex' => $pageIndex,
-            'limit' => $limit,
-        ];
-    }
-    public function filterByRattingReview(Request $params)
-    {
-        //pagination
-        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
-        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
-        $offset = ($pageIndex - 1) * $limit;
-
-        
-        $books = $this->bookModel;
-        $finalPrice = $this->finalPrice();
-        $ratingStar = $this->calculateRating();
-        $books = $this->bookModel
-            ->where('calculate.rating', '=', $params['rating_star'])
-            ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
-            ->joinSub($ratingStar, 'calculate', function ($join) {
-                $join->on('book.id', '=', 'calculate.id');
-            })
-            ->join('author', 'book.author_id', '=', 'author.id')
-            ->select(
-                'check_final_price.id', 
-                'check_final_price.book_price', 
-                'check_final_price.book_cover_photo',
-                'check_final_price.discount_price', 
-                'check_final_price.discount_start_date',
-                'check_final_price.discount_end_date', 
-                'author.author_name', 
-                'check_final_price.final_price', 
-                'calculate.count', 
-                'calculate.sum', 
-                'calculate.rating');
-            
-            if(isset($params['sort_by_on_sale'])){
-                $books
-                ->where('check_final_price.discount_price', '!=', null)
-                ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
-                ->orderBy('check_final_price.final_price', 'asc');
-            }       
-            if(isset($params['sort_by_popular'])){
-                $books 
-                ->join('review', 'review.book_id', '=', 'book.id')
-                ->selectRaw('book.id,count(review.id) as total_review')
-                ->groupBy(
-                    'book.id', 
-                    'check_final_price.id' ,
-                    'check_final_price.book_price',
-                    'check_final_price.book_cover_photo',
-                    'check_final_price.discount_price', 
-                    'check_final_price.discount_start_date', 
-                    'check_final_price.discount_end_date',
-                    'author.author_name', 
-                    'check_final_price.final_price')
-                ->orderBy('check_final_price.final_price', 'asc')
-                ->orderBy('total_review', 'desc');
-            }
-            if(isset($params['sort_by_price_asc'])){
-                $books->orderBy('check_final_price.final_price', 'asc');
-            }
-            if(isset($params['sort_by_price_desc'])){
-                $books->orderBy('check_final_price.final_price', 'desc');
-            }
-
-
-        
-
-        $items = $books->offset($offset)->limit($limit)->get();
-
-        return [
-            'items' => $items,
-            'total' => $books->count(),
-            'pageIndex' => $pageIndex,
-            'limit' => $limit,
-        ];
-
-    }
-
-    public function sortByPriceDes(Request $params){
-        //pagination
-        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
-        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
-        $offset = ($pageIndex - 1) * $limit;        
-        $query= $this->bookModel;
-  
-        $books = $this->bookModel
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
-            ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
-            ->orderBy('final_price', 'desc');
-            $items = $books->offset($offset)->limit($limit)->get();
-
-            return [
-                'items' => $items,
-                'total' => $books->count(),
-                'pageIndex' => $pageIndex,
-                'limit' => $limit,
-            ];
-       
-    }
-
-    public function sortByPriceAsc(Request $params){
-         //pagination
-        $pageIndex = $params['pageIndex'] ?? self::PAGE_INDEX_DEFAULT;
-        $limit = $params['limit'] ?? self::LIMIT_DEFAULT;
-        $offset = ($pageIndex - 1) * $limit;
-        $books = $this->bookModel
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
-            ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo','check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
-            ->orderBy('final_price', 'asc'); 
-            $items = $books->offset($offset)->limit($limit)->get();
-
-            return [
-                'items' => $items,
-                'total' => $books->count(),
-                'pageIndex' => $pageIndex,
-                'limit' => $limit,
-            ];
-    }
 }

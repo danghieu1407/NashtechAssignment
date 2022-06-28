@@ -22,30 +22,12 @@ class ShopController extends Controller
         $this->reviewRepository = $reviewRepository;
     }
    
-    public function filterByCategoryName( Request $params)
+    public function filterByCategoryName_Author_RatingReview( Request $params)
     {
-        $books = $this->bookRepository->filterByCategoryName($params);
-        return $books;
-    }
-    public function filterByAuthor( Request $params){
-        $books = $this->bookRepository->filterByAuthor($params);
+        $books = $this->bookRepository->filterByCategoryName_Author_RatingReview($params);
         return $books;
     }
 
-    public function filterByRattingReview(Request $params){
-        $books = $this->bookRepository->filterByRattingReview($params);
-        return $books;
-    }
-    
-    public function sortByPriceDes(Request $params){
-        $books = $this->bookRepository->sortByPriceDes($params);
-        return $books;
-    }
-
-    public function sortByPriceAsc(Request $params){
-        $books = $this->bookRepository->sortByPriceAsc($params);
-        return $books;
-    }
 
     public function getAllCategoryName(){
         $category = $this->categoryRepository->getAll();
