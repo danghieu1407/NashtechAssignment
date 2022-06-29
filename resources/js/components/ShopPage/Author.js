@@ -16,13 +16,17 @@ class Author extends React.Component {
       })
       .catch(error => console.log(error));
   }
+  getAuthorName = (author_name) => {
+    this.props.getAuthorName(author_name);
+  }
+
   render() {
     return (
       <>
         <ul className="sub-category-tabs">
           <li><b>Author</b></li>
           {this.state.data.map((item, idx) => (
-            <li className="item">{item.author_name}</li>
+            <li className="item" onClick={()=> this.getAuthorName(item.author_name)}>{item.author_name}</li>
           ))}
         </ul>
       </>

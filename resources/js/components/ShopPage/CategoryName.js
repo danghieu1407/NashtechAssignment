@@ -6,7 +6,13 @@ import axios from "axios";
 
 class CategoryName extends React.Component {
     state = {
-        data: []
+        data: [],
+        current_page : 1,
+        per_page : 5,
+        total_page : 0,
+        category_name: undefined,
+        author_name: undefined,
+        rating_review: undefined,
     }
 
     componentDidMount() {
@@ -18,13 +24,16 @@ class CategoryName extends React.Component {
           })
           .catch(error => console.log(error));
       }
+      getCategory = (category_name) => {
+        this.props.getCategoryName(category_name);
+      }
   render() {
     return (
         <>
          <ul className="sub-category-tabs">
                 <li><b>CategoryName</b></li>
                  {this.state.data.map((item, idx) => (
-                <li className="item">{item.category_name}</li>
+                <li className="item" onClick={()=>this.getCategory(item.category_name)}>{item.category_name}</li>
                 ))}
             </ul>
                     
