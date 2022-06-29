@@ -30,20 +30,8 @@ Route::get('/checkDiscount','HomeController@checkDiscount');
 
 //shop Controller
 Route::get('/filterBy', 'ShopController@filterByCategoryName_Author_RatingReview');
-Route::get('/filterByAuthor', 'ShopController@filterByAuthor');
-Route::get('/filterByRattingReview', 'ShopController@filterByRattingReview');
 Route::get('/sortByPriceDes', 'ShopController@sortByPriceDes');
 Route::get('/sortByPriceAsc', 'ShopController@sortByPriceAsc');
 Route::get('/getAllCategoryName', 'ShopController@getAllCategoryName');
 Route::get('/getAllAuthorName', 'ShopController@getAllAuthorName');
 Route::get('/getRatingReview', 'ShopController@getRatingReview');
-
-
-
-
-
-
-
-
-
-
