@@ -46,60 +46,13 @@ class BookRepository implements BaseInterface
         return $book;
     }
 
-    public function finalPrice()
-    {
-        $date = date('Y-m-d');
-        return $this->bookModel
-            ->leftJoin('discount', 'book.id', '=', 'discount.book_id')
-            ->select('book.id', 'book.book_title', 'book.book_price', 'book.book_cover_photo', 'discount.discount_price', 'discount.discount_start_date', 'discount.discount_end_date')
-            ->selectRaw('
-        (CASE 
-            WHEN discount.discount_price IS NULL 
-            THEN book.book_price
-
-            WHEN discount.discount_price IS NOT NULL
-            AND discount.discount_end_date < ?
-            THEN book_price
-            
-            WHEN  discount.discount_price IS NOT NULL
-            AND discount.discount_start_date <= ?
-            THEN discount_price
-
-            WHEN  discount.discount_price IS NOT NULL
-            AND discount.discount_start_date IS NULL
-            AND discount.discount_end_date >= ?
-            THEN discount_price
-
-            WHEN discount.discount_price IS NOT NULL
-            AND discount.discount_start_date < ?
-            AND ( discount.discount_end_date > ? OR discount.discount_end_date IS NULL)
-            THEN discount_price
-
-      
-
-            ELSE book.book_price
-            END) AS final_price', [$date, $date, $date, $date, $date]);
-    }
+  
     //10 Books on Sale
     public function getTheMostDiscountBooks()
     {
-        $finalPrice = $this->finalPrice();
-        $books = $this->bookModel
-            ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
+
+        $books = $this->bookModel->FinalPriceOfBook()
             ->join('author', 'book.author_id', '=', 'author.id')
-            ->select(
-                'check_final_price.id',
-                'check_final_price.book_title',
-                'check_final_price.book_price',
-                'check_final_price.book_cover_photo',
-                'check_final_price.discount_price',
-                'check_final_price.discount_start_date',
-                'check_final_price.discount_end_date',
-                'author.author_name',
-                'check_final_price.final_price'
-            )
             ->selectRaw('book.book_price - check_final_price.discount_price as subprice')
             ->where('check_final_price.discount_price', '!=', null)
             ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
@@ -132,12 +85,9 @@ class BookRepository implements BaseInterface
     }
     public function getTheMostRatingStartsBooks()
     {
-        $finalPrice = $this->finalPrice();
         $ratingStar = $this->calculateRating();
-        $books = $this->bookModel
-            ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
+        $books = $this->bookModel->FinalPriceOfBook()
+         
             ->joinSub($ratingStar, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
             })
@@ -162,19 +112,13 @@ class BookRepository implements BaseInterface
 
     public function getTheMostReviewBooks()
     {
-        $finalPrice = $this->finalPrice();
-        $books = $this->bookModel
+        $books = $this->bookModel->FinalPriceOfBook()
             ->join('review', 'review.book_id', '=', 'book.id')
-            ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
             ->join('author', 'book.author_id', '=', 'author.id')
-            ->select('check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo', 'check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
             ->selectRaw('book.*,count(review.id) as total_review')
-            ->groupBy('book.id', 'check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo', 'check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
+            ->groupBy('book.id', 'check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo', 'check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price','check_final_price.book_title')
             ->orderBy('total_review', 'desc')
             ->orderBy('final_price', 'asc')
-
             ->limit(8)
             ->get();
         return  $books;
@@ -183,14 +127,10 @@ class BookRepository implements BaseInterface
     public function filterByCategoryName_Author_RatingReview(Request $params)
     {
         $per_page = request()->per_page ?? self::LIMIT_DEFAULT;
-        $finalPrice = $this->finalPrice();
         $ratingStar = $this->calculateRating();
 
         if (!isset($params['category_name']) && (!isset($params['author_name']) && (!isset($params['rating_star'])))) {
-            $books = $this->bookModel
-                ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                    $join->on('book.id', '=', 'check_final_price.id');
-                })
+            $books = $this->bookModel->FinalPriceOfBook()
                 ->join('author', 'book.author_id', '=', 'author.id')
                 ->select(
                     'check_final_price.id',
@@ -211,13 +151,10 @@ class BookRepository implements BaseInterface
             return $books;
         }
         else if ((isset($params['author_name']) && !isset($params['category_name']) && (!isset($params['rating_star']) ))){
-            $books = $this->bookModel
+            $books = $this->bookModel-> FinalPriceOfBook()
             ->join('author', 'book.author_id', '=', 'author.id')
             ->select('book.*', 'author.author_name')
             ->where('author.author_name', '=', $params['author_name'])
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
             ->joinSub($ratingStar, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
             })
@@ -234,13 +171,13 @@ class BookRepository implements BaseInterface
             return $books;
         } 
         else if ((isset($params['author_name']) && isset($params['category_name']) && (!isset($params['rating_star']) ))){
-            $books = $this->bookModel
+            $books = $this->bookModel->FinalPriceOfBook()
             ->join('author', 'book.author_id', '=', 'author.id')
+            ->join('category', 'book.category_id', '=', 'category.id')
             ->select('book.*', 'author.author_name')
             ->where('author.author_name', '=', $params['author_name'])
-            ->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
+            ->where('category.category_name', '=', $params['category_name'])
+     
             ->joinSub($ratingStar, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
             })
@@ -252,18 +189,16 @@ class BookRepository implements BaseInterface
             'check_final_price.discount_start_date', 
             'check_final_price.discount_end_date', 
             'author.author_name', 
-            'check_final_price.final_price')
+            'check_final_price.final_price','category.category_name')
             ->paginate($per_page);
             return $books;
         }
         else if ((!isset($params['author_name']) && !isset($params['category_name']) && (isset($params['rating_star']) ))){
-        $finalPrice = $this->finalPrice();
+        
         $ratingStar = $this->calculateRating();
-        $books = $this->bookModel
+        $books = $this->bookModel->FinalPriceOfBook()
             ->where('calculate.rating', '=', $params['rating_star'])
-            ->joinSub($finalPrice, 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            })
+    
             ->joinSub($ratingStar, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
             })
@@ -286,7 +221,7 @@ class BookRepository implements BaseInterface
             }
         else {
            
-            $books = $this->bookModel
+            $books = $this->bookModel-> FinalPriceOfBook()
                 ->join('category', 'category.id', '=', 'book.category_id')
                 ->join('author', 'book.author_id', '=', 'author.id')
                 ->select('book.*', 'category_name')
@@ -301,9 +236,7 @@ class BookRepository implements BaseInterface
                     });
             }
 
-            $books->joinSub($this->finalPrice(), 'check_final_price', function ($join) {
-                $join->on('book.id', '=', 'check_final_price.id');
-            });
+            
             if (isset($params['rating_star'])) {
                 $books->select(
                     'check_final_price.id',
@@ -316,7 +249,8 @@ class BookRepository implements BaseInterface
                     'check_final_price.final_price',
                     'calculate.count',
                     'calculate.sum',
-                    'calculate.rating'
+                    'calculate.rating',
+                    'category.category_name'
                 );
             } else {
                 $books->select(
