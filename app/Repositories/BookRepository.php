@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repositories;
-
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\Book;
 use App\Models\Discount;
 use DB;
@@ -70,16 +70,17 @@ class BookRepository implements BaseInterface
         //ví dụ: 1 rate 2sao, 3 rate 5 sao => (số lượng rate x số sao + số lượng rate x số sao) : count = 17:4
         $calculate = $this->bookModel
             ->join('review', 'book.id', '=', 'review.book_id')
-            ->selectRaw('book.id, round(count(review.id),0) as count, round(sum(review.rating_star),0) as sum')
+            ->selectRaw('book.id, round(count(review.id),1) as count, round(sum(review.rating_star),1) as sum')
             ->groupBy('book.id');
         $result = $this->bookModel
             ->joinSub($calculate, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
             })
             ->select('book.*', 'calculate.count', 'calculate.sum')
-            ->selectRaw('round(calculate.sum/calculate.count,0) as rating')
+            ->selectRaw('round(calculate.sum/calculate.count,1) as rating')
 
             ->orderBy('rating', 'desc');
+            
 
         return  $result;
     }
@@ -194,10 +195,10 @@ class BookRepository implements BaseInterface
             return $books;
         }
         else if ((!isset($params['author_name']) && !isset($params['category_name']) && (isset($params['rating_star']) ))){
-        
+        $rating_star = $params['rating_star'];
         $ratingStar = $this->calculateRating();
         $books = $this->bookModel->FinalPriceOfBook()
-            ->where('calculate.rating', '=', $params['rating_star'])
+        
     
             ->joinSub($ratingStar, 'calculate', function ($join) {
                 $join->on('book.id', '=', 'calculate.id');
@@ -215,9 +216,25 @@ class BookRepository implements BaseInterface
                 'check_final_price.final_price', 
                 'calculate.count', 
                 'calculate.sum', 
-                'calculate.rating')
-            ->paginate($per_page);
-            return $books;
+                'calculate.rating');
+                
+                if ($rating_star ==1) {
+                    $books->whereBetween('calculate.rating', [0, 1]);
+                }
+                else if ($rating_star ==2) {
+                    $books->whereBetween('calculate.rating', [1, 2]);
+                }
+                else if ($rating_star ==3) {
+                    $books->whereBetween('calculate.rating', [2, 3]);
+                }
+                else if ($rating_star ==4) {
+                    $books->whereBetween('calculate.rating', [3, 4]);
+                }
+                else if ($rating_star ==5) {
+                    $books->whereBetween('calculate.rating', [4, 5]);
+                }
+           
+            return $books ->paginate($per_page);
             }
         else {
            
@@ -238,6 +255,7 @@ class BookRepository implements BaseInterface
 
             
             if (isset($params['rating_star'])) {
+                $rating_star = $params['rating_star'];
                 $books->select(
                     'check_final_price.id',
                     'check_final_price.book_price',
@@ -252,6 +270,24 @@ class BookRepository implements BaseInterface
                     'calculate.rating',
                     'category.category_name'
                 );
+       
+                if ($rating_star ==1) {
+                    $books->where('calculate.rating', '=', [0, 1]);
+                }
+                else if ($rating_star ==2) {
+                    $books->where('calculate.rating', '=', [1, 2]);
+                }
+                else if ($rating_star ==3) {
+                    $books->where('calculate.rating', '=', [2, 3]);
+                }
+                else if ($rating_star ==4) {
+                    $books->where('calculate.rating', '=', [3, 4]);
+                }
+                else if ($rating_star ==5) {
+                    $books->where('calculate.rating', '=', [4, 5]);
+                }
+                
+                
             } else {
                 $books->select(
                     'check_final_price.id',
@@ -306,4 +342,88 @@ class BookRepository implements BaseInterface
             return $books->paginate($per_page);
         }
     }
+   
+
+
+
+
+    public function  getBookByIDCustomerReview(Request $params){
+    
+        $ratingStar  = $this->calculateRating();
+        $books = $this -> bookModel->FinalPriceOfBook()
+    
+        ->join('category', 'category.id', '=', 'book.category_id')
+        ->join('author', 'book.author_id', '=', 'author.id')
+        ->join('review', 'review.book_id', '=', 'book.id')
+        ->joinSub($ratingStar, 'calculate', function ($join) {
+            $join->on('book.id', '=', 'calculate.id');
+        })
+        ->where('book.id', '=', $params['id'])    
+        ->select(
+            'book.*',
+            'category.category_name',
+            'author.author_name',
+            'calculate.count',
+            'calculate.sum',
+            'calculate.rating',
+            'check_final_price.id',
+            'check_final_price.book_price',
+            'check_final_price.book_cover_photo',
+            'check_final_price.discount_price',
+            'check_final_price.discount_start_date',
+            'check_final_price.discount_end_date',
+            'author.author_name',
+            'check_final_price.final_price',
+            
+           
+        )
+        ->withCount([
+            'review AS 1_Star' => function (Builder $query) {
+                $query->where('rating_star', 1);
+            },
+            'review AS 2_Star' => function (Builder $query) {
+                $query->where('rating_star', 2);
+            },
+            'review AS 3_Star' => function (Builder $query) {
+                $query->where('rating_star', 3);
+            },
+            'review AS 4_Star' => function (Builder $query) {
+                $query->where('rating_star', 4);
+            },
+            'review AS 5_Star' => function (Builder $query) {
+                $query->where('rating_star', 5);
+            },
+            'review AS count_review',
+        ])
+        ->groupBy('book.id', 'category.category_name', 'author.author_name', 'calculate.count', 'calculate.sum', 'calculate.rating', 'check_final_price.id', 'check_final_price.book_price', 'check_final_price.book_cover_photo', 'check_final_price.discount_price', 'check_final_price.discount_start_date', 'check_final_price.discount_end_date', 'author.author_name', 'check_final_price.final_price')
+        ->get();
+
+        return $books;
+    
+    }
+
+    public function getBookReviewByID(Request $params){
+        $per_page = request()->per_page ?? self::LIMIT_DEFAULT;
+        $books = $this -> bookModel
+        ->join('review', 'review.book_id', '=', 'book.id')
+        ->where('book.id', '=', $params['id'])    
+        ->select('book.id')
+        ->selectRaw(
+            'book.id,review.review_title , 
+            review.review_details, 
+            review.rating_star, 
+            review.review_date'
+            )
+        ->groupBy(
+            'review.id',
+            'review.review_title',
+            'book.id',
+            'review.review_details',
+            'review.rating_star',
+            'review.review_date'
+            )
+        ->paginate($per_page);
+        return $books;
+    }    
+    
 }

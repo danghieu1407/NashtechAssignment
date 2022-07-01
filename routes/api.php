@@ -35,3 +35,14 @@ Route::get('/sortByPriceAsc', 'ShopController@sortByPriceAsc');
 Route::get('/getAllCategoryName', 'ShopController@getAllCategoryName');
 Route::get('/getAllAuthorName', 'ShopController@getAllAuthorName');
 Route::get('/getRatingReview', 'ShopController@getRatingReview');
+
+//Product controller
+Route::get('/getBookByIdToProductPage', 'ProductController@getBookByIdToProductPage');
+Route::get('/getBookByID', 'ProductController@getBookByID');
+Route::get('/getBookByIDCustomerReview', 'ProductController@getBookByIDCustomerReview');
+Route::get('/calculateReviewRating', 'ProductController@calculateReviewRating');
+Route::get('/getBookReviewByID', 'ProductController@getBookReviewByID');
+
+
+
+
