@@ -53,7 +53,7 @@ class ShopPageBody extends React.Component {
     if (per_page) {
       array.push(`per_page=${per_page}`);
     }
-
+  
     for (let i = 0; i < array.length; i++) {
       if (i === 0) {
         url += "?" + array[i];

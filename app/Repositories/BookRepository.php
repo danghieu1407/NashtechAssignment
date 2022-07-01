@@ -236,6 +236,45 @@ class BookRepository implements BaseInterface
            
             return $books ->paginate($per_page);
             }
+        else if(!isset($params['category_name']) && (isset($params['author_name']) && (isset($params['rating_star'])))){
+            $rating_star = $params['rating_star'];
+            $ratingStar = $this->calculateRating();
+            $books = $this->bookModel->FinalPriceOfBook()
+            ->joinSub($ratingStar, 'calculate', function ($join) {
+                $join->on('book.id', '=', 'calculate.id');
+            })
+            ->join('author', 'book.author_id', '=', 'author.id')
+            ->select(
+                'check_final_price.id', 
+                'check_final_price.book_price', 
+                'check_final_price.book_cover_photo',
+                'check_final_price.discount_price', 
+                'check_final_price.discount_start_date',
+                'check_final_price.discount_end_date', 
+                'author.author_name', 
+                'check_final_price.final_price', 
+                'calculate.count', 
+                'calculate.sum', 
+                'calculate.rating')
+                ->where('author.author_name', '=', $params['author_name']);
+                if ($rating_star ==1) {
+                    $books->whereBetween('calculate.rating', [0, 1]);
+                }
+                else if ($rating_star ==2) {
+                    $books->whereBetween('calculate.rating', [1, 2]);
+                }
+                else if ($rating_star ==3) {
+                    $books->whereBetween('calculate.rating', [2, 3]);
+                }
+                else if ($rating_star ==4) {
+                    $books->whereBetween('calculate.rating', [3, 4]);
+                }
+                else if ($rating_star ==5) {
+                    $books->whereBetween('calculate.rating', [4, 5]);
+                }
+                return $books ->paginate($per_page);
+
+        }
         else {
            
             $books = $this->bookModel-> FinalPriceOfBook()
@@ -272,19 +311,19 @@ class BookRepository implements BaseInterface
                 );
        
                 if ($rating_star ==1) {
-                    $books->where('calculate.rating', '=', [0, 1]);
+                    $books->whereBetween('calculate.rating', [0, 1]);
                 }
                 else if ($rating_star ==2) {
-                    $books->where('calculate.rating', '=', [1, 2]);
+                    $books->whereBetween('calculate.rating', [1, 2]);
                 }
                 else if ($rating_star ==3) {
-                    $books->where('calculate.rating', '=', [2, 3]);
+                    $books->whereBetween('calculate.rating', [2, 3]);
                 }
                 else if ($rating_star ==4) {
-                    $books->where('calculate.rating', '=', [3, 4]);
+                    $books->whereBetween('calculate.rating', [3, 4]);
                 }
                 else if ($rating_star ==5) {
-                    $books->where('calculate.rating', '=', [4, 5]);
+                    $books->whereBetween('calculate.rating', [4, 5]);
                 }
                 
                 
