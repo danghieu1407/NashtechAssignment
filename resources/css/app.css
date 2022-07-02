@@ -150,6 +150,100 @@ ul .sub-category-tabs {
 .page-item:first-child .page-link {
     margin-left: 0px !important;
 }
+/* product page css */
+.container book_info{
+    margin-top: 20px;
+    width: 1700px !important;
+}
+.card-product-info{
+    width: 800px !important;
+}
+.book_info{
+    display: flex;
+ 
+}
+.img-author{
+    display: block;
+}
+.book-description{
+    display: block;
+}
+.bookinfo-price
+{
+    display: flex;
+}
+.product-final-price{
+    font-size: 40px;
+}
+.quantity-picker{
+    margin-left: 7px;
 
+}
+.btn-add-to-cart{
+    width: 225px;
+    margin-top: 30px;
+    margin-left: 7px;
+}
+.placeOrder{
+    margin-left: 100px;
+    width: 400px;
+}
 
+.custumer-review{
+    font-weight: bold;
+    display: flex;
+}
+.custumer-review .header{
+    font-size: 24px;
+}
+
+.starfilterby{
+    font-weight: normal;
+    color: black;
+    font-size: 18px;
+}
+.starfilterby:hover{
+    color: black;
+    text-decoration: none
+}
+.rating_star{
+    font-size: 24px;
+    font-weight: bold;
+}
+.star-count{
+    text-decoration: underline;
+    color: black;
+    padding: 10px;
+}
+.number-showing{
+    margin-top:20px
+}
+
+.showing-btn{
+    display: flex;
+}
+.button-sort-review{
+    display: flex;
+    margin-top: 10px;
+    margin-left: 200px;
+    
+}
+.btn-showing{
+    margin-left: 10px;
+}
+#dropdown-basic{
+    background-color: #2596be;
+}
+.star{
+    font-size: 18px;
+    color: black;
+    text-decoration: none;
+}
+.content-review{
+    margin-top: 10px;
+}
+.date-review{
+    font-size: 16px;
+    color: black;
+}
 
