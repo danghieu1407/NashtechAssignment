@@ -505,9 +505,18 @@ class BookRepository implements BaseInterface
             'review.review_details',
             'review.rating_star',
             'review.review_date'
-            )
-        ->paginate($per_page);
-        return $books;
+        );
+        if (!isset($params['sort_by_date_desc']) && !isset($params['sort_by_date_asc'])) {
+            $books->orderBy('review.review_date', 'desc');
+        }
+        if (isset($params['sort_by_date_desc'])) {
+            $books->orderBy('review.review_date', 'desc');
+        }
+        if (isset($params['sort_by_date_asc'])) {
+            $books->orderBy('review.review_date', 'asc');
+        }
+
+        return $books->paginate($per_page);
     }    
     
 }
