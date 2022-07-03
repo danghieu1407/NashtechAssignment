@@ -144,12 +144,57 @@ class BookRepository implements BaseInterface
                     'author.author_name',
                     'check_final_price.final_price'
                 )
-                ->selectRaw('book.book_price - check_final_price.discount_price as subprice')
-                ->where('check_final_price.discount_price', '!=', null)
-                ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
-                ->orderBy('subprice', 'desc')
-                ->paginate($per_page);
-            return $books;
+                ->selectRaw('book.book_price - check_final_price.discount_price as subprice');
+                if (!isset($params['sort_by_on_sale']) && (!isset($params['sort_by_popularity']) && (!isset($params['sort_by_price_asc']) && (!isset($params['sort_by_price_desc']))))) {
+                    $books
+                    ->where('check_final_price.discount_price', '!=', null)
+                    ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
+                    ->orderBy('check_final_price.final_price', 'asc')
+                    ->orderBy('check_final_price.discount_price', 'desc');
+                }
+              
+
+                if (isset($params['sort_by_on_sale'])) {
+                    $books
+                    ->where('check_final_price.discount_price', '!=', null)
+                    ->whereRaw('check_final_price.discount_price = check_final_price.final_price')
+                    ->orderBy('check_final_price.final_price', 'asc')
+                    ->orderBy('check_final_price.discount_price', 'desc');
+                }
+                if (isset($params['sort_by_popularity'])) {
+                    $books
+                        ->join('review', 'review.book_id', '=', 'book.id')
+                        ->joinSub($ratingStar, 'calculate', function ($join) {
+                            $join->on('book.id', '=', 'calculate.id');
+                        })
+                        ->selectRaw('book.id,count(review.id) as total_review')
+                        ->groupBy(
+                            'book.id',
+                            'check_final_price.id',
+                            'check_final_price.book_price',
+                            'check_final_price.book_cover_photo',
+                            'check_final_price.discount_price',
+                            'check_final_price.discount_start_date',
+                            'check_final_price.discount_end_date',
+                            'author.author_name',
+                            'check_final_price.final_price', 
+                            'check_final_price.book_title',
+                            'calculate.count',
+                            'calculate.sum',
+                            'calculate.rating'
+                        )
+                        ->orderBy('check_final_price.final_price', 'asc')
+                        ->orderBy('total_review', 'desc');
+                }
+                if (isset($params['sort_by_price_asc'])) {
+                    $books->orderBy('check_final_price.final_price', 'asc');
+                }
+                if (isset($params['sort_by_price_desc'])) {
+                    $books->orderBy('check_final_price.final_price', 'desc');
+                }
+
+                    
+            return $books->paginate($per_page);
         }
         else if ((isset($params['author_name']) && !isset($params['category_name']) && (!isset($params['rating_star']) ))){
             $books = $this->bookModel-> FinalPriceOfBook()
