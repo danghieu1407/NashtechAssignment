@@ -89,5 +89,4 @@ class Book extends Model
         );
 
     }
-    
 }
