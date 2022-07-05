@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 //home controller
 Route::get('/books', 'HomeController@getTheMostDiscountBooks');
 Route::get('/books/{id}', 'HomeController@getById');
@@ -44,7 +42,17 @@ Route::get('/calculateReviewRating', 'ProductController@calculateReviewRating');
 Route::get('/getBookReviewByID', 'ProductController@getBookReviewByID');
 Route::get('/countReviewStar', 'ProductController@countReviewStar');
 
+//login
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
+Route::post('/login', 'AuthController@login');
+Route::post('/register', 'AuthController@register');
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', 'AuthController@user');
+    Route::post('/logout', 'AuthController@logout');
+});
 
 
