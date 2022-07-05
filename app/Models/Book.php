@@ -70,7 +70,7 @@ class Book extends Model
             ELSE book.book_price
             END) AS final_price', [$date, $date, $date, $date, $date]);
     }
-    public function scopeFinalPriceOfBook($query){
+    public function scopefinalPriceOfBook($query){
         $finalPrice = $this->finalPrice();
         return $query  
         ->joinSub($finalPrice, 'check_final_price', function ($join) {

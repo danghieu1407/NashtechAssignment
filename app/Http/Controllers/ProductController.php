@@ -28,4 +28,9 @@ class ProductController extends Controller
         return $books;
     }
 
+    public function countReviewStar(Request $params){
+        $books = $this->bookRepository->countReviewStar($params);
+        return $books;
+    }
+
 }

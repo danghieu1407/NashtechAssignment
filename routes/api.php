@@ -42,6 +42,8 @@ Route::get('/getBookByID', 'ProductController@getBookByID');
 Route::get('/getBookByIDCustomerReview', 'ProductController@getBookByIDCustomerReview');
 Route::get('/calculateReviewRating', 'ProductController@calculateReviewRating');
 Route::get('/getBookReviewByID', 'ProductController@getBookReviewByID');
+Route::get('/countReviewStar', 'ProductController@countReviewStar');
+
 
 
 
