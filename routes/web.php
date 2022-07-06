@@ -21,8 +21,9 @@ Route::get('/ShopPage', function (){
     return view('welcome');
 });
 
-Route::get('/ProductPage', function (){
+Route::get('/ProductPage/{id}', function ($id){
     return view('welcome');
+    // return 'Product Page '.$id;
 });
 
 

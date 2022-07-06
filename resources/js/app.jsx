@@ -11,7 +11,7 @@ ReactDOM.render(
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/ShopPage" element={<ShopPage />} />
-            <Route path="/ProductPage" element={<ProductPage />} />
+            <Route path="/ProductPage/:id" element={<ProductPage />} />
 
 
     

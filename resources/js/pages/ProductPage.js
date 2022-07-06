@@ -5,11 +5,13 @@ import ProductPageBody from "../components/ProductPage/ProductPageBody";
 import Footer from "../components/Footer/Footer";
 
 class ProductPage extends React.Component {
+
+
   render() {
     return (
       <div>
         <Header />
-        <ProductPageBody />
+        <ProductPageBody  />
         <Footer />
       </div>
     );
