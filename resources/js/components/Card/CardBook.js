@@ -12,6 +12,7 @@ import Book8 from "../../../assets/bookcover/book8.jpg";
 import Book9 from "../../../assets/bookcover/book9.jpg";
 import Book10 from "../../../assets/bookcover/book10.jpg";
 import BookDefault from "../../../assets/images/defaultImg.png";
+import {Link} from "react-router-dom";
 const obj = {
   book1: Book1
   , book2: Book2
@@ -29,7 +30,7 @@ const obj = {
 class CardBook extends React.Component {
   render() {
     return (
-      <>
+      <Link to={`/ProductPage/${this.props.id}`}>
           <Card className="card-container h-100 w-100">
             <Card.Img className="card-img" variant="top" src={obj[this.props.img]} />
             <Card.Body>
@@ -38,10 +39,10 @@ class CardBook extends React.Component {
 
             </Card.Body>
             <Card.Footer>
-              <Card.Title className="card-price"><del className="del_original_price">{this.props.discount_price !==null ? this.props.original_price : 'ad' }$</del><span> {this.props.discount_price}$</span></Card.Title>
+              <Card.Title className="card-price"><del className="del_original_price">{this.props.discount_price ===this.props.final_price ? `${this.props.original_price}$` : '' }</del><span> {this.props.final_price}$</span></Card.Title>
             </Card.Footer>
           </Card>
-        </>
+        </Link>
         );
     }
 }

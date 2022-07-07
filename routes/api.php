@@ -52,7 +52,7 @@ Route::post('/register', 'AuthController@register');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', 'AuthController@user');
-    Route::post('/logout', 'AuthController@logout');
+    Route::get('/logout', 'AuthController@logout');
 });
 
 
