@@ -55,4 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/logout', 'AuthController@logout');
 });
 
+//createReview 
+Route::post('/createReview', 'ProductController@createReview');
+
 

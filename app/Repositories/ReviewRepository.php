@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Repositories;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+
 
 use App\Models\Review;
 
@@ -52,5 +56,34 @@ class ReviewRepository implements BaseInterface
         return $reviews;
         
         
+    }
+
+    public function createReview(Request $request){
+        $message = [
+            'review_title.required' => 'Please input title',
+            'rating_star.required' => 'Please input review star',
+        ];
+        $validate = Validator::make($request->all(), 
+            [
+                'review_title' => 'required',
+                'rating_star' => 'required',
+            ], $message);
+        if($validate->fails()) {
+            return response()->json(['message' => $validate->errors()], 400);
+        }
+        $currentTime = Carbon::now()->toDateTimeString();
+        $review = new Review();
+        $review->book_id = $request->book_id;
+        $review->review_title = $request->review_title;
+        $review->review_details = $request->review_details;
+        $review->rating_star = $request->rating_star;
+        $review->review_date = $currentTime ;
+        $review->save();
+
+        return response()->json(
+            ['message' => 'Create Review Success ! ',
+            'review' => $review,
+            ], 200);
+
     }
 }
