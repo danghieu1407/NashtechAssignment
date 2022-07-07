@@ -5,6 +5,7 @@ import CardBook from "../Card/CardBook";
 import axios from "axios";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Pagination from "react-js-pagination";
 
 class ShopPageBody extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class ShopPageBody extends React.Component {
       author: "",
       rating: "",
       sort: "",
+      total: 0,
     };
   }
   componentDidMount() {
@@ -68,6 +70,7 @@ class ShopPageBody extends React.Component {
         const data = res.data;
         this.setState({ data: data.data });
         this.setState({ current_page: data.current_page });
+        this.setState({total: data.total});
       })
       .catch((error) => console.log(error));
   };
@@ -129,7 +132,6 @@ class ShopPageBody extends React.Component {
     this.setState({ rating: rating });
   };
 
-
   sortBy = (e) => {
     let category;
     let author;
@@ -159,7 +161,6 @@ class ShopPageBody extends React.Component {
     let rating;
     let sort;
     let page;
-   
 
     if (this.state.category) {
       category = this.state.category;
@@ -185,7 +186,6 @@ class ShopPageBody extends React.Component {
       rating: rating,
       sort: sort,
       page: page,
-    
     });
     this.setState({ per_page: e });
   };
@@ -284,47 +284,31 @@ class ShopPageBody extends React.Component {
                 {this.state.data.length > 0 &&
                   this.state.data.map((item, idx) => (
                     <div className="col-md-3">
-                    <CardBook id={item.id}  author={item.author_name} title={item.book_title} img={item.book_cover_photo} original_price={item.book_price} final_price={item.final_price} discount_price={item.discount_price}  />
+                      <CardBook
+                        id={item.id}
+                        author={item.author_name}
+                        title={item.book_title}
+                        img={item.book_cover_photo}
+                        original_price={item.book_price}
+                        final_price={item.final_price}
+                        discount_price={item.discount_price}
+                      />
                     </div>
                   ))}
               </div>
               <div className="row">
                 <div className="col-md-12"></div>
-
-                <ul className="pagination">
-                  <li className="page-item">
-                    <a
-                      className="page-link"
-                      onClick={() => this.page(this.state.current_page - 1)}
-                    >
-                      Previous
-                    </a>
-                  </li>
-                  <li className="page-item">
-                    <a className="page-link" onClick={() => this.page(1)}>
-                      1
-                    </a>
-                  </li>
-                  <li className="page-item">
-                    <a className="page-link" onClick={() => this.page(2)}>
-                      2
-                    </a>
-                  </li>
-                  <li className="page-item">
-                    <a className="page-link" onClick={() => this.page("3")}>
-                      3
-                    </a>
-                  </li>
-
-                  <li className="page-item">
-                    <a
-                      className="page-link"
-                      onClick={() => this.page(this.state.current_page + 1)}
-                    >
-                      Next
-                    </a>
-                  </li>
-                </ul>
+                <Pagination
+                  activePage={this.state.current_page}
+                  itemsCountPerPage={this.state.per_page}
+                  totalItemsCount={this.state.total}
+                  pageRangeDisplayed={3}
+                  onChange={this.page.bind(this)}
+                  prevPageText="Previous"
+                  nextPageText="Next"
+                  itemClass="page-item"
+                  linkClass="page-link"
+                />
               </div>
             </div>
           </div>

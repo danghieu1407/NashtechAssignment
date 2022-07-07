@@ -3,6 +3,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import axios from "axios";
 import nodata from "../../../assets/images/Nodata.gif";
 import moment from "moment";
+import Pagination from "react-js-pagination";
 
 class BookReview extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class BookReview extends React.Component {
       total_page: 0,
       sort: "",
       id: [],
+      total: 0,
     };
   }
   componentDidMount() {
@@ -32,6 +34,7 @@ class BookReview extends React.Component {
       .get(`http://localhost:8000/api/getBookByIDCustomerReview?id=${id}`)
       .then((res) => {
         const data = res.data;
+     ;
 
         this.setState({ data: data });
       })
@@ -54,12 +57,13 @@ class BookReview extends React.Component {
     sort = undefined,
     per_page = undefined,
     rating_star = undefined,
+    page = undefined,
   } = {}) => {
     let url = `http://localhost:8000/api/getBookReviewByID?id=${id}`;
     let array = [];
-    // if (page) {
-    //   array.push(`page=${page}`);
-    // }
+    if (page) {
+      array.push(`page=${page}`);
+    }
     if (rating_star) {
       array.push(`${rating_star}`);
     }
@@ -75,12 +79,16 @@ class BookReview extends React.Component {
     console.log(array);
     axios
       .get(url)
+      
       .then((res) => {
         const review = res.data;
+        console.log(review);
+
         this.setState({ review: review.data });
         this.setState({ id: id });
-
         this.setState({ current_page: review.current_page });
+        this.setState({ total: review.total });
+
       })
       .catch((error) => console.log(error));
   };
@@ -98,8 +106,13 @@ class BookReview extends React.Component {
     let location = window.location.pathname.split("/");
     let id = location[location.length - 1];
     let sort;
+    let page;
+
     if (this.state.sort) {
       sort = this.state.sort;
+    }
+    if (this.state.page) {
+      page = this.state.page;
     }
     this.getReviewById({
       id: id,
@@ -108,7 +121,26 @@ class BookReview extends React.Component {
     });
     this.setState({ per_page: e });
   };
+  page = (e) => {
+    let sort;
+    let per_page;
+    let location = window.location.pathname.split("/");
+    let id = location[location.length - 1];
 
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
+    if (this.state.per_page) {
+      per_page = this.state.per_page;
+    }
+    this.getReviewById({
+      id: id,
+      page: e,
+      sort: sort,
+      per_page: per_page,
+    });
+    this.setState({ current_page: e });
+  };
   render() {
     return (
       <>
@@ -281,24 +313,18 @@ class BookReview extends React.Component {
         {this.state.dataCountStar.length === 0 ? (
           ""
         ) : (
-          <ul className="pagination">
-            <li className="page-item">
-              <a className="page-link">Previous</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link">1</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link">2</a>
-            </li>
-            <li className="page-item">
-              <a className="page-link">3</a>
-            </li>
-
-            <li className="page-item">
-              <a className="page-link">Next</a>
-            </li>
-          </ul>
+   
+          <Pagination
+                  activePage={this.state.current_page}
+                  itemsCountPerPage={this.state.per_page}
+                  totalItemsCount={this.state.total}
+                  pageRangeDisplayed={3}
+                  onChange={this.page.bind(this)}
+                  prevPageText="Previous"
+                  nextPageText="Next"
+                  itemClass="page-item"
+                  linkClass="page-link"
+                />
         )}
       </>
     );
