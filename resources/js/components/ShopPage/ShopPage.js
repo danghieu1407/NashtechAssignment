@@ -53,7 +53,7 @@ class ShopPageBody extends React.Component {
     if (per_page) {
       array.push(`per_page=${per_page}`);
     }
-  
+
     for (let i = 0; i < array.length; i++) {
       if (i === 0) {
         url += "?" + array[i];
@@ -74,6 +74,8 @@ class ShopPageBody extends React.Component {
   getCategoryName = (category_name) => {
     let author;
     let rating;
+    let page;
+    let per_page;
 
     if (this.state.author) {
       author = this.state.author;
@@ -81,11 +83,19 @@ class ShopPageBody extends React.Component {
     if (this.state.rating) {
       rating = this.state.rating;
     }
+    if (this.state.page) {
+      page = this.state.page;
+    }
+    if (this.state.per_page) {
+      per_page = this.state.per_page;
+    }
 
     this.onClickPerPage({
       category: category_name,
       author: author,
       rating: rating,
+      page: page,
+      per_page: per_page,
     });
     this.setState({ category: category_name });
   };
@@ -119,6 +129,7 @@ class ShopPageBody extends React.Component {
     this.setState({ rating: rating });
   };
 
+
   sortBy = (e) => {
     let category;
     let author;
@@ -146,6 +157,9 @@ class ShopPageBody extends React.Component {
     let category;
     let author;
     let rating;
+    let sort;
+    let page;
+   
 
     if (this.state.category) {
       category = this.state.category;
@@ -156,11 +170,22 @@ class ShopPageBody extends React.Component {
     if (this.state.rating) {
       rating = this.state.rating;
     }
+
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
+    if (this.state.page) {
+      page = this.state.page;
+    }
+
     this.onClickPerPage({
       per_page: e,
       category: category,
       author: author,
       rating: rating,
+      sort: sort,
+      page: page,
+    
     });
     this.setState({ per_page: e });
   };
@@ -168,7 +193,9 @@ class ShopPageBody extends React.Component {
     let category;
     let author;
     let rating;
-    
+    let sort;
+    let per_page;
+
     if (this.state.category) {
       category = this.state.category;
     }
@@ -178,16 +205,22 @@ class ShopPageBody extends React.Component {
     if (this.state.rating) {
       rating = this.state.rating;
     }
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
+    if (this.state.per_page) {
+      per_page = this.state.per_page;
+    }
     this.onClickPerPage({
       page: e,
       category: category,
       author: author,
       rating: rating,
-      
+      sort: sort,
+      per_page: per_page,
     });
-    this.setState({ page: e });
-  }    
-
+    this.setState({ current_page: e });
+  };
 
   render() {
     return (
@@ -251,13 +284,7 @@ class ShopPageBody extends React.Component {
                 {this.state.data.length > 0 &&
                   this.state.data.map((item, idx) => (
                     <div className="col-md-3">
-                      <CardBook
-                        author={item.author_name}
-                        title={item.book_title}
-                        img={item.book_cover_photo}
-                        original_price={item.book_price}
-                        discount_price={item.final_price}
-                      />
+                    <CardBook id={item.id}  author={item.author_name} title={item.book_title} img={item.book_cover_photo} original_price={item.book_price} final_price={item.final_price} discount_price={item.discount_price}  />
                     </div>
                   ))}
               </div>
@@ -268,35 +295,23 @@ class ShopPageBody extends React.Component {
                   <li className="page-item">
                     <a
                       className="page-link"
-                      onClick={() =>
-                        this.page(this.state.page - 1)
-                       
-                      }
+                      onClick={() => this.page(this.state.current_page - 1)}
                     >
                       Previous
                     </a>
                   </li>
                   <li className="page-item">
-                    <a
-                      className="page-link"
-                      onClick={() => this.page(1)}
-                    >
+                    <a className="page-link" onClick={() => this.page(1)}>
                       1
                     </a>
                   </li>
                   <li className="page-item">
-                    <a
-                      className="page-link"
-                      onClick={() => this.page(2)}
-                    >
+                    <a className="page-link" onClick={() => this.page(2)}>
                       2
                     </a>
                   </li>
                   <li className="page-item">
-                    <a
-                      className="page-link"
-                      onClick={() => this.page('3')}
-                    >
+                    <a className="page-link" onClick={() => this.page("3")}>
                       3
                     </a>
                   </li>
@@ -304,9 +319,7 @@ class ShopPageBody extends React.Component {
                   <li className="page-item">
                     <a
                       className="page-link"
-                      onClick={() =>
-                        this.page(this.state.page + 1)
-                      }
+                      onClick={() => this.page(this.state.current_page + 1)}
                     >
                       Next
                     </a>

@@ -48,7 +48,7 @@ class OnSale extends React.Component {
       >
      {this.state.data.map((item, idx) => (
       <SwiperSlide>
-          <CardBook author={item.author_name} title={item.book_title} img={item.book_cover_photo} original_price={item.book_price} discount_price={item.final_price}  />
+          <CardBook id={item.id}  author={item.author_name} title={item.book_title} img={item.book_cover_photo} original_price={item.book_price} final_price={item.final_price} discount_price={item.discount_price}  />
         </SwiperSlide>
         ))}
       </Swiper>
