@@ -3,6 +3,7 @@ import "../../../css/app.css";
 import { Card, Button } from "react-bootstrap";
 import { QuantityPicker } from "react-qty-picker";
 import BookReview from "./BookReview";
+import PostReview from "./PostReview";
 import axios from "axios";
 import Book1 from "../../../assets/bookcover/book1.jpg";
 import Book2 from "../../../assets/bookcover/book2.jpg";

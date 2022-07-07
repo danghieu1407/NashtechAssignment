@@ -1,6 +1,7 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import axios from "axios";
+import nodata from "../../../assets/images/Nodata.gif";
 
 class BookReview extends React.Component {
   constructor(props) {
@@ -258,8 +259,10 @@ class BookReview extends React.Component {
             </div>
           </div>
         )}
-
-        {this.state.review.map((item, index) => (
+        {this.state.review.length === 0 ? (
+          <img src={nodata} alt="nodata" className="nodata-img" />
+        ) : (
+        this.state.review.map((item, index) => (
           <>
             <div className="col-md-12">
               <div className="col-md-8">
@@ -273,7 +276,7 @@ class BookReview extends React.Component {
               </div>
             </div>
           </>
-        ))}
+        )))}
 
         {this.state.dataCountStar.length === 0 ? (
           ""
