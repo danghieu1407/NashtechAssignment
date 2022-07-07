@@ -2,6 +2,7 @@ import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import axios from "axios";
 import nodata from "../../../assets/images/Nodata.gif";
+import moment from "moment";
 
 class BookReview extends React.Component {
   constructor(props) {
@@ -92,7 +93,6 @@ class BookReview extends React.Component {
       sort: e,
     });
     this.setState({ sort: e });
-    console.log("nhấn rồi nè");
   };
   per_page = (e) => {
     let location = window.location.pathname.split("/");
@@ -272,7 +272,7 @@ class BookReview extends React.Component {
                   <a className="star">{item.rating_star} Star</a>
                 </h4>
                 <p className="content-review">{item.review_details}</p>
-                <p className="date-review">{item.review_date}</p>
+                <p className="date-review">{moment(item.review_date).format("MMM Do YY")}</p>
               </div>
             </div>
           </>
