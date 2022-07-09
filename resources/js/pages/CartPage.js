@@ -1,7 +1,7 @@
 import React from "react";
 
 import Header from "../components/Header/Header";
-import Cat from "../components/ProductPage/ProductPageBody";
+import CartPageBody from "../components/CartPage/CartPage";
 import Footer from "../components/Footer/Footer";
 
 
@@ -10,7 +10,7 @@ class CartPage extends React.Component {
       return (
         <div>
           <Header />
-          <HomePageBody />
+          <CartPageBody />
           <Footer />
         </div>
       );

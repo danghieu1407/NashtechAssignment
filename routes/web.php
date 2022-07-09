@@ -30,6 +30,10 @@ Route::get('/About', function (){
     return view('welcome');
 });
 
+Route::get('/Cart', function (){
+    return view('welcome');
+});
+
 
 
 
