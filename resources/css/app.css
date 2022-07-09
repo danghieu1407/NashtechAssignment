@@ -309,3 +309,20 @@ ul{
     width: 400px;
     height: 400px;
   }
+
+  /* about pagge*/
+  .about-title{
+    align-items: center;
+    text-align: center;
+  }
+  .aboutPage{
+    width: 700px !important;
+    height: 650px !important;
+  }
+  .aboutPageHeader{
+    width: 1200px !important;
+    margin-top: 20px;
+
+
+  }
+

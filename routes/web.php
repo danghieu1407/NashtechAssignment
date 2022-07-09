@@ -26,6 +26,10 @@ Route::get('/ProductPage/{id}', function ($id){
     // return 'Product Page '.$id;
 });
 
+Route::get('/About', function (){
+    return view('welcome');
+});
+
 
 
 
