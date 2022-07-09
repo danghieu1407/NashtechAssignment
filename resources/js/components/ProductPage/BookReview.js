@@ -4,6 +4,7 @@ import axios from "axios";
 import nodata from "../../../assets/images/Nodata.gif";
 import moment from "moment";
 import Pagination from "react-js-pagination";
+import PostReview from "./PostReview";
 
 class BookReview extends React.Component {
   constructor(props) {
@@ -144,9 +145,13 @@ class BookReview extends React.Component {
   render() {
     return (
       <>
+<div className="row">
+    <div className="col-md-12">
+    </div>
+      <div className="col-md-8">
+
         {this.state.dataCountStar.length === 0 ? (
-          <div className="col-md-12">
-            <div className="col-md-12">
+            <div className="col-md-12 px-0">
               <div className="custumer-review">
                 <p className="header">
                   Custumer Review
@@ -162,12 +167,11 @@ class BookReview extends React.Component {
                 <span> | </span> <a className="star-count">1 Star (0) </a>
               </span>
             </div>
-          </div>
         ) : (
           this.state.dataCountStar.map((item, index) => (
             <>
-              <div className="col-md-12">
-                <div className="col-md-12">
+              <div className="col-md-12 px-0">
+   
                   <div className="custumer-review">
                     <p className="header">
                       Custumer Review
@@ -246,21 +250,23 @@ class BookReview extends React.Component {
                       1 Star ({item["1_Star"]}){" "}
                     </a>
                   </span>
-                </div>
+
               </div>
+              
             </>
           ))
         )}
+     
 
         {this.state.dataCountStar.length === 0 &&
         this.state.review.length === 0 ? (
           ""
         ) : (
-          <div className="col-md-12 showing-btn">
-            <div className="col-md-3">
+          <div className="col-md-12 px-0 showing-btn">
+            <div className="col-md-3 px-0">
               <p className="number-showing"> Showing 1 - 12 of 3134 reviews</p>
             </div>
-            <div className="col-md-9 button-sort-review ">
+            <div className="col-md-9 px-0 button-sort-review ">
               <Dropdown onSelect={this.sortBy}>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                   Sort by newest to oldest
@@ -293,11 +299,11 @@ class BookReview extends React.Component {
         )}
         {this.state.review.length === 0 ? (
           <img src={nodata} alt="nodata" className="nodata-img" />
+          
         ) : (
         this.state.review.map((item, index) => (
           <>
-            <div className="col-md-12">
-              <div className="col-md-8">
+            <div className="col-md-12 px-0">
                 <hr />
                 <h4>
                   {item.review_title} |
@@ -305,11 +311,15 @@ class BookReview extends React.Component {
                 </h4>
                 <p className="content-review">{item.review_details}</p>
                 <p className="date-review">{moment(item.review_date).format("MMM Do YY")}</p>
-              </div>
             </div>
           </>
         )))}
-
+        </div>
+        <div className="col-md-4 postreview">
+        <PostReview/>
+        </div>
+      </div>
+     
         {this.state.dataCountStar.length === 0 ? (
           ""
         ) : (
@@ -327,7 +337,11 @@ class BookReview extends React.Component {
                 />
         )}
       </>
+      
+      
     );
+    
+    
   }
 }
 export default BookReview;

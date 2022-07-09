@@ -62,11 +62,14 @@ class ReviewRepository implements BaseInterface
         $message = [
             'review_title.required' => 'Please input title',
             'rating_star.required' => 'Please input review star',
+            'review_title.max' => 'Title must be less than 120 characters',
+           
         ];
         $validate = Validator::make($request->all(), 
             [
                 'review_title' => 'required',
                 'rating_star' => 'required',
+                'review_title' => 'max:120',
             ], $message);
         if($validate->fails()) {
             return response()->json(['message' => $validate->errors()], 400);

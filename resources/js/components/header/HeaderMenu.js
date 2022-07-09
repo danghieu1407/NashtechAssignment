@@ -179,7 +179,7 @@ class HeaderMenu extends React.Component {
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
-          onClick={() => this.onHide()}
+          
         >
           <Modal.Header closeButton >
             <Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>

@@ -189,7 +189,7 @@ ul{
     margin-left: 7px;
 }
 .placeOrder{
-    margin-left: 100px;
+    margin-left: 10px;
     width: 400px;
 }
 
@@ -261,9 +261,8 @@ ul{
 }
 
 /* toast  */
-.swal2-popup {
+.colored-toast.swal2-icon-success {
     background-color: #a5dc86 !important;
-    margin-top: 70px !important;
   }
 
   .colored-toast.swal2-icon-error {
@@ -295,14 +294,18 @@ ul{
   }
 
   /*post review */
-  .post-review{
-    margin-left: 260px;
-    margin-bottom: 500px;
-    position: relative;
+  .postreview{
+    display: flex;
+    /* margin-left: 100px; */
   }
 
   /* nodata img */
   .nodata-img{
     width: 600px;
     margin-left: 20px;
+  }
+
+  #img-success{
+    width: 400px;
+    height: 400px;
   }
