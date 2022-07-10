@@ -13,6 +13,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "../../../css/app.css";
+import { Link } from "react-router-dom";
 
 class OnSale extends React.Component {
   state = {
@@ -34,7 +35,7 @@ class OnSale extends React.Component {
     <Container className="container"  fixed>
    <br></br>
         <div>
-        <h1>OnSale   <Button className="view-all">View All <MdPlayArrow></MdPlayArrow></Button></h1>
+        <h3>OnSale   <Link to={'/ShopPage'}><Button className="view-all">View All <MdPlayArrow></MdPlayArrow></Button> </Link></h3>
       
         </div> 
       <Swiper
