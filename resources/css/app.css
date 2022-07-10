@@ -20,6 +20,8 @@
     margin-left: 1200px;
     font-size: 20px;
     margin-top: 0px;
+    padding: 10px;
+    width: 70px;
 }
 
 /* onsale */
@@ -251,9 +253,51 @@ ul{
     color: black;
 }
 .link-active{
-    background-color: #ff4400;
-   
-    text-decoration: none;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    border-radius: 7px;
+    background-size: 400% 400%;
+    animation: gradient1 10s ease infinite;
+    width: 80px;
+    padding: 6px;
+    padding-left: 10px;
+    
+    /* text-decoration: none; */
+}
+@keyframes gradient1 {
+	0% {
+		background-position: 0% 50%;
+	}
+    10% {
+        background-position: 100% 50%;
+    }
+    20% {
+        background-position: 0% 50%;
+    }
+    30% {
+        background-position: 100% 50%;
+    }
+    40% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    60% {
+        background-position: 0% 50%;
+    }
+    70% {
+        background-position: 100% 50%;
+    }
+    80% {
+        background-position: 0% 50%;
+    }
+    90% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+	
 }
 
 .btn-login{
@@ -317,7 +361,7 @@ ul{
   }
   .aboutPage{
     width: 700px !important;
-    height: 650px !important;
+    height: 647px !important;
   }
   .aboutPageHeader{
     width: 1200px !important;
