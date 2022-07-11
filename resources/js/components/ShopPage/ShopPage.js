@@ -269,7 +269,7 @@ class ShopPageBody extends React.Component {
             </div>
             <div className="col-md-9">
               <div className="row">
-                <div className="col-12 d-flex justify-content-end">
+                <div className="col-12 d-flex justify-content-end mb-3">
                 <Dropdown className="mr-3" onSelect={this.sortBy}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     {this.state.sort
