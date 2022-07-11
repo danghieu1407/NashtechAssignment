@@ -4,7 +4,8 @@ import { Alert, Navbar } from "react-bootstrap";
 import { Link, NavLink } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { InputGroup, FormControl } from "react-bootstrap";
-import { FcPortraitMode } from "react-icons/fc";
+import { FcPortraitMode, FcKey } from "react-icons/fc";
+
 import axios from "axios";
 import { Dropdown, Toggle } from "react-bootstrap";
 import Swal from 'sweetalert2/dist/sweetalert2.js'
@@ -174,8 +175,8 @@ class HeaderMenu extends React.Component {
                   {this.state.first_name} {this.state.last_name}
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  <Dropdown.Item className="log-out-btn" onSelect={()=>this.logOut()}>Log out</Dropdown.Item>
+                <Dropdown.Menu className="logout">
+                  <Dropdown.Item  className="log-out-btn" onSelect={()=>this.logOut()}>Log out</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Navbar.Brand>
@@ -188,7 +189,7 @@ class HeaderMenu extends React.Component {
           centered
           
         >
-          <Modal.Header closeButton >
+          <Modal.Header className="modal-login" >
             <Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -208,10 +209,10 @@ class HeaderMenu extends React.Component {
                 
               />
             </InputGroup>
-            <InputGroup className="mb-2">
+            <InputGroup className="mb-2 password-modal">
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroup-sizing-default">
-                  <FcPortraitMode /> Password
+                  <FcKey /> Password
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl  type="password"
@@ -221,6 +222,7 @@ class HeaderMenu extends React.Component {
              
               />
             </InputGroup>
+           
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.submit} className="btn-login">

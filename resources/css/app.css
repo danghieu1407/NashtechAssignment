@@ -393,3 +393,83 @@ ul{
     padding: 6px;
 
 }
+
+/* modal */
+.modal-content{
+    width: 500px !important;
+    margin-left: 200px !important;
+}
+.input-group-text{
+    width: 120px;
+}
+
+.input-group-text{
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab) ;
+    border-radius: 3px !important;
+    background-size: 400% 400% !important;
+    animation: gradient2 10s ease infinite !important;
+}
+
+@keyframes gradient2 {
+	0% {
+		background-position: 0% 50%;
+	}
+    10% {
+        background-position: 100% 50%;
+    }
+    20% {
+        background-position: 0% 50%;
+    }
+    30% {
+        background-position: 100% 50%;
+    }
+    40% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    60% {
+        background-position: 0% 50%;
+    }
+    70% {
+        background-position: 100% 50%;
+    }
+    80% {
+        background-position: 0% 50%;
+    }
+    90% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+	
+}
+#dropdown-basic{
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab) ;
+    border-radius: 3px !important;
+    background-size: 400% 400% !important;
+    animation: gradient2 10s ease infinite !important;
+    border-radius: 7px;
+    color: white !important;
+}
+.log-out-btn{
+    color: #23a6d5 !important;
+}
+.dropdown-item:hover{
+    color: black !important ;
+    border-radius: 7px !important;
+    background: none !important;
+    width: 130px !important;
+}
+a.log-out-btn.dropdown-item{
+    color: #23a6d5 !important;
+}
+a.log-out-btn.dropdown-item:hover{
+    color: black !important ;
+    border-radius: 7px !important;
+    background: none !important;
+    width: 130px !important;
+}
+
