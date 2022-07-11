@@ -299,9 +299,9 @@ class ShopPageBody extends React.Component {
 
                   <Dropdown.Menu>
                     <Dropdown.Item eventKey="5">Show 5</Dropdown.Item>
-                    <Dropdown.Item eventKey="10">Show 10</Dropdown.Item>
                     <Dropdown.Item eventKey="15">Show 15</Dropdown.Item>
                     <Dropdown.Item eventKey="20">Show 20</Dropdown.Item>
+                    <Dropdown.Item eventKey="25">Show 25</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
                 </div>
