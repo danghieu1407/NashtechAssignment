@@ -136,7 +136,9 @@ class ProductPageBody extends React.Component {
                     }
                     }
                      />
+                       <div className="mb-3  text-post-review" >
                     <Button className="btn-add-to-cart" onClick={()=>this.addToCart()}>Add to cart</Button>
+                    </div>
                   </Card.Body>
                 </Card>
               </div>

@@ -104,22 +104,22 @@ class PostReview extends React.Component {
     return (
       <div className="post-review">
         <Card style={{ width: "18rem" }}>
-        <Card.Footer className="product-final-price"> Write a Review</Card.Footer>
+        <Card.Footer className="title-post-review"> Write a Review</Card.Footer>
           
           <Form>
-            <Form.Group className="mb-3" >
+            <Form.Group className="mb-3 text-post-review" >
               <Form.Label>Add a title</Form.Label>
               <Form.Control  type="text" placeholder="" onChange={(e)=> this.setState({review_title: e.target.value})} />
             </Form.Group>
 
-            <Form.Group className="mb-3" >
+            <Form.Group className="mb-3  text-post-review" >
               <Form.Label>Details please! Your review helps other shoppers</Form.Label>
               <Form.Control as="textarea" rows={3} onChange={(e)=> this.setState({review_details: e.target.value})} />
             </Form.Group>
 
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Select a rating star </Form.Label>
-              <Form.Control as="select" value={this.state.rating_star} onChange={(e)=> this.setState({rating_star: e.target.value})} >
+            <Form.Group className="text-post-review" controlId="exampleForm.ControlSelect1">
+              <Form.Label >Select a rating star </Form.Label>
+              <Form.Control  as="select" value={this.state.rating_star} onChange={(e)=> this.setState({rating_star: e.target.value})} >
                 <option>Please select ...</option>
                 <option>1</option>
                 <option>2</option>
@@ -128,10 +128,12 @@ class PostReview extends React.Component {
                 <option>5</option>
               </Form.Control>
             </Form.Group>
-
-            <Button variant="primary" onClick={this.submitReview}>
+            <Form.Group className="mb-3  text-post-review" >
+            <Button variant="primary" className="btn-postreview" onClick={this.submitReview}>
               Submit
             </Button>
+            </Form.Group>
+
           </Form>
         </Card>
       </div>
