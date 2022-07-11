@@ -1,7 +1,7 @@
 import React from "react";
 import "../../../css/app.css";
 import HeaderLogo from "./HeaderLogo";
-
+import { Link } from "react-router-dom";
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +14,7 @@ class Header extends React.Component {
 
     return (
       <div>
-        <HeaderLogo />
+        <Link className="link-header" to={"/"}><HeaderLogo /></Link>
      
       </div>
     );
