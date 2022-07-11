@@ -23,7 +23,6 @@ class HeaderMenu extends React.Component {
   }
   componentDidMount() {
     this.getName();
-  
   }
 
   openModal = () => {
@@ -148,8 +147,8 @@ class HeaderMenu extends React.Component {
               to="/ShopPage"
               className={({ isActive }) => (isActive ? "link-active" : "link")}
             >
-              {" "}
-              Shop{" "}
+            
+              Shop
             </NavLink>
           </Navbar.Brand>
           <Navbar.Brand>
