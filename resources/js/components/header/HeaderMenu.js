@@ -161,7 +161,15 @@ class HeaderMenu extends React.Component {
               About{" "}
             </NavLink>
           </Navbar.Brand>
-          <Navbar.Brand href="#Cart">Cart</Navbar.Brand>
+          <Navbar.Brand>
+            <NavLink
+              to="/Cart"
+              className={({ isActive }) => (isActive ? "link-active" : "link")}
+            >
+              {" "}
+              Cart{" "}
+            </NavLink>
+          </Navbar.Brand>
           {/* if  */}
           {!localStorage.getItem("token") ? (
             <Navbar.Brand onClick={() => this.openModal()}>
