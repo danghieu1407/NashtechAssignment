@@ -35,13 +35,18 @@ class ProductPageBody extends React.Component {
     super(props);
     this.state = {
       data: [],
-    };
+      cart: [],
+      quantity: 0,
+      total: 0,
+
+        };
   }
   componentDidMount() {
     console.log(window.location.pathname);
     let location = window.location.pathname.split("/");
     let id = location[location.length - 1];
     this.getProductById(id);
+  
   }
   getProductById = (id) => {
     axios
@@ -53,28 +58,58 @@ class ProductPageBody extends React.Component {
       .catch((error) => console.log(error));
   };
 
+ // add to cart
+  addToCart = () => {
+ 
+    let cart = this.state.cart;
+    let data = this.state.data;
+    let book = data[0];
+    
+    let quantity = this.state.quantity;
+    let bookInCart = cart.find((item) => item.id);
+    if (bookInCart ) {
+      bookInCart.quantity += quantity;
+    }
+    else {
+      book.quantity = quantity;
+      cart.push(book);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+ 
+    //total price
+    let total = 0;
+    cart.forEach((item) => {
+      total += item.quantity * item.price;
+    }
+    );
+    this.setState({ cart: cart });
+    this.setState({ total: total });
+
+
+  }
+
+
+
   render() {
     return (
       <div className="container book_info_container">
-        <div className="row">
+             {
+              this.state.data.length > 0 &&  <h3>{this.state.data[0].category_name}</h3>
+             }
+        <div className="row mb-3">
      
           {this.state.data.map((item,index) => (
             <>
-          <h3>{item.category_name}</h3>
-
-            <div className="col-md-12">
-            <hr></hr>
-
-            <div className="col-md-12 bookinfo-price">
-              <div className="col-md-8 book_info ">
+            <div className="col-md-8 book_info">
                 <div className="img-author">
-                  <img src={obj[item.book_cover_photo]}></img>
+                  <img src={obj[item.book_cover_photo]} width="320" height="420"></img>
                   <p className="author-name-product">
                     by Author:<b> {item.author_name}</b>
                   </p>
                 </div>
 
-                <div className="book-description">
+                <div className="book-description ml-3">
                   <h5>{item.book_title}</h5>
 
                   <p>
@@ -95,18 +130,21 @@ class ProductPageBody extends React.Component {
                   </Card.Footer>
                   <Card.Body>
                     <p>Quantity</p>
-                    <QuantityPicker min={1} max={8} width="8rem" input />
-                    <Button className="btn-add-to-cart">Add to cart</Button>
+                    <QuantityPicker min={1} max={8} width="8rem" input 
+                    onChange={(e) => {
+                      this.setState({ quantity: e });
+                    }
+                    }
+                     />
+                    <Button className="btn-add-to-cart" onClick={()=>this.addToCart()}>Add to cart</Button>
                   </Card.Body>
                 </Card>
               </div>
-            </div>
-            </div>
-            <BookReview />
             </>
           ))}
           
         </div>
+        <BookReview />
       </div>
     )
   }

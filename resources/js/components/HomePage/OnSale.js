@@ -13,7 +13,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "../../../css/app.css";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";  
 
 class OnSale extends React.Component {
   state = {
@@ -38,6 +38,8 @@ class OnSale extends React.Component {
         <h3>OnSale   <Link to={'/ShopPage'}><Button className="view-all">View All <MdPlayArrow></MdPlayArrow></Button> </Link></h3>
       
         </div> 
+   <br></br>
+
       <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
             spaceBetween={28}
