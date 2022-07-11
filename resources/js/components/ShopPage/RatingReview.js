@@ -26,7 +26,7 @@ class RatingReview extends React.Component {
         <ul className="sub-category-tabs">
           <li><b>Rating Review</b></li>
           {this.state.data.map((item, idx) => (
-            <li className="item" onClick={()=>this.getRatingReview(item.rating_star)}>{item.rating_star} Star</li>
+            <li className={`item ${this.props.current_rating === item.rating_star ? 'filter_active' : ''}`} onClick={()=>this.getRatingReview(item.rating_star)}>{item.rating_star} Star</li>
           ))}
         </ul>
       </>

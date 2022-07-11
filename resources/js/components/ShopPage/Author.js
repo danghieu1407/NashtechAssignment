@@ -26,7 +26,7 @@ class Author extends React.Component {
         <ul className="sub-category-tabs">
           <li><b>Author</b></li>
           {this.state.data.map((item, idx) => (
-            <li className="item" onClick={()=> this.getAuthorName(item.author_name)}>{item.author_name}</li>
+            <li className={`item ${this.props.current_author === item.author_name ? 'filter_active' : ''}`} onClick={()=> this.getAuthorName(item.author_name)}>{item.author_name}</li>
           ))}
         </ul>
       </>

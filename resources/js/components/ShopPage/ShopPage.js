@@ -6,6 +6,7 @@ import axios from "axios";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Pagination from "react-js-pagination";
+import imgnodata from "../../../assets/images/Nodata2.gif";
 
 class ShopPageBody extends React.Component {
   constructor(props) {
@@ -77,8 +78,8 @@ class ShopPageBody extends React.Component {
   getCategoryName = (category_name) => {
     let author;
     let rating;
-    let page;
     let per_page;
+    let sort;
 
     if (this.state.author) {
       author = this.state.author;
@@ -86,49 +87,72 @@ class ShopPageBody extends React.Component {
     if (this.state.rating) {
       rating = this.state.rating;
     }
-    if (this.state.page) {
-      page = this.state.page;
-    }
+
     if (this.state.per_page) {
       per_page = this.state.per_page;
     }
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
+
 
     this.onClickPerPage({
       category: category_name,
       author: author,
       rating: rating,
-      page: page,
       per_page: per_page,
+      sort: sort,
     });
     this.setState({ category: category_name });
   };
   getAuthorName = (author_name) => {
     let category;
     let rating;
+    let per_page;
+    let sort;
+
     if (this.state.category) {
       category = this.state.category;
     }
     if (this.state.rating) {
       rating = this.state.rating;
     }
+    if (this.state.per_page) {
+      per_page = this.state.per_page;
+    }
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
+    
     this.onClickPerPage({
       author: author_name,
       category: category,
       rating: rating,
+      per_page: per_page,
+      sort: sort,
+
     });
     this.setState({ author: author_name });
   };
   getRatingReview = (rating) => {
     let category;
     let author;
+    let per_page;
+    let sort;
     if (this.state.category) {
       category = this.state.category;
     }
     if (this.state.author) {
       author = this.state.author;
     }
+    if (this.state.per_page) {
+      per_page = this.state.per_page;
+    }
+    if (this.state.sort) {
+      sort = this.state.sort;
+    }
 
-    this.onClickPerPage({ rating: rating, category: category, author: author });
+    this.onClickPerPage({ rating: rating, category: category, author: author, per_page: per_page, sort: sort });
     this.setState({ rating: rating });
   };
 
@@ -238,11 +262,15 @@ class ShopPageBody extends React.Component {
                 getCategoryName={this.getCategoryName}
                 getAuthorName={this.getAuthorName}
                 getRatingReview={this.getRatingReview}
+                category={this.state.category}
+                author={this.state.author}
+                rating={this.state.rating}
               />
             </div>
             <div className="col-md-9">
               <div className="row">
-                <Dropdown onSelect={this.sortBy}>
+                <div className="col-12 d-flex justify-content-end">
+                <Dropdown className="mr-3" onSelect={this.sortBy}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     {this.state.sort
                       ? this.state.sort.split("_").join(" ")
@@ -264,8 +292,6 @@ class ShopPageBody extends React.Component {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              </div>
-              <div className="row">
                 <Dropdown onSelect={this.per_page}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     Show {this.state.per_page ? this.state.per_page : "5"}
@@ -278,10 +304,11 @@ class ShopPageBody extends React.Component {
                     <Dropdown.Item eventKey="20">Show 20</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
+                </div>
               </div>
-
+             
               <div className="row">
-                {this.state.data.length > 0 &&
+                {this.state.data.length > 0 ? this.state.data.length > 0 &&
                   this.state.data.map((item, idx) => (
                     <div className="col-md-3">
                       <CardBook
@@ -294,11 +321,11 @@ class ShopPageBody extends React.Component {
                         discount_price={item.discount_price}
                       />
                     </div>
-                  ))}
+                  )) : (<img src={imgnodata}/>)}
               </div>
               <div className="row">
-                <div className="col-md-12"></div>
-                <Pagination
+                <div className="col-md-12 pagination"></div>
+                {this.state.data.length > 0 ? ( <Pagination
                   activePage={this.state.current_page}
                   itemsCountPerPage={this.state.per_page}
                   totalItemsCount={this.state.total}
@@ -308,7 +335,8 @@ class ShopPageBody extends React.Component {
                   nextPageText="Next"
                   itemClass="page-item"
                   linkClass="page-link"
-                />
+                />) : '' }
+               
               </div>
             </div>
           </div>

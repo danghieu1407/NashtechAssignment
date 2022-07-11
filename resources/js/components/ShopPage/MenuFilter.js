@@ -21,9 +21,10 @@ class MenuFilter extends React.Component {
           <li>
             <b id="filterby">Filter By</b>
 
-            <CategoryName getCategoryName={this.getCategoryName} />
-            <Author getAuthorName={this.getAuthorName} />
-            <RatingReview getRatingReview={this.getRatingReview} />
+            <CategoryName getCategoryName={this.getCategoryName} current_category={this.props.category} />
+   
+            <Author getAuthorName={this.getAuthorName} current_author={this.props.author} />
+            <RatingReview getRatingReview={this.getRatingReview} current_rating={this.props.rating} />
           </li>
         </ul>
       </div>

@@ -7,7 +7,6 @@
     margin-top: 0px;
 }
 #logoName{
-    margin-left: 90px;
     margin-top: 3px;
 }
 
@@ -17,11 +16,10 @@
 
 
 #nav-link{
-    margin-left: 1200px;
     font-size: 20px;
     margin-top: 0px;
     padding: 10px;
-    width: 70px;
+    margin-left: auto;
 }
 
 /* onsale */
@@ -137,11 +135,14 @@ ul .sub-category-tabs {
 }
 
 .sub-category-tabs .item {
-    margin-left: 12px;
+    font-style: italic;
+    font-size: 12px;
+    padding: 5px;
 }
  
 ul{
-    border: none !important;
+    border: #23a6d5 1px solid;
+
 }
 
 .pagination{
@@ -191,7 +192,6 @@ ul{
     margin-left: 7px;
 }
 .placeOrder{
-    margin-left: 10px;
     width: 400px;
 }
 
@@ -260,8 +260,7 @@ ul{
     width: 80px;
     padding: 6px;
     padding-left: 10px;
-    
-    /* text-decoration: none; */
+
 }
 @keyframes gradient1 {
 	0% {
@@ -307,22 +306,31 @@ ul{
 /* toast  */
 .colored-toast.swal2-icon-success {
     background-color: #a5dc86 !important;
+    margin-top: 80px;
   }
 
   .colored-toast.swal2-icon-error {
     background-color: #f27474 !important;
+    margin-top: 80px;
+
   }
   
   .colored-toast.swal2-icon-warning {
     background-color: #f8bb86 !important;
+    margin-top: 80px;
+
   }
   
   .colored-toast.swal2-icon-info {
     background-color: #3fc3ee !important;
+    margin-top: 80px;
+
   }
   
   .colored-toast.swal2-icon-question {
     background-color: #87adbd !important;
+    margin-top: 80px;
+
   }
   
   .colored-toast .swal2-title {
@@ -376,3 +384,12 @@ ul{
   }
   
 
+.filter_active {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    border-radius: 7px;
+    background-size: 400% 400%;
+    animation: gradient1 10s ease infinite;
+    color: white;
+    padding: 6px;
+
+}

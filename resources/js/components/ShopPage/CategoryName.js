@@ -33,7 +33,7 @@ class CategoryName extends React.Component {
          <ul className="sub-category-tabs">
                 <li><b>CategoryName</b></li>
                  {this.state.data.map((item, idx) => (
-                <li className="item" onClick={()=>this.getCategory(item.category_name)}>{item.category_name}</li>
+                <li className={`item ${this.props.current_category === item.category_name ? 'filter_active' : ''}`} onClick={()=>this.getCategory(item.category_name)}>{item.category_name}</li>
                 ))}
             </ul>
                     
