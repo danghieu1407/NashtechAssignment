@@ -499,3 +499,19 @@ a.log-out-btn.dropdown-item:hover{
     color: white !important;
     width: 270px;
 }
+
+.title-cart{
+    text-align: center;
+}
+.container.cartpage{
+    min-height: 700px !important;
+    margin-top: 20px;
+ 
+}
+
+.table-cart{
+    text-align: center;
+}
+.cart-price{
+    text-align: center;
+}
