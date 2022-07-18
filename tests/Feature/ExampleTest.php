@@ -18,4 +18,16 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_user_can_login_and_has_token()
+    {
+        $body = [
+            "email" => "danghieu14072002@gmail.com",
+            "password" => "nguyendanghieu"
+        ];
+
+        $this->json('POST', 'api/login', $body, ['Accept' => 'application/json'])
+            ->assertStatus(200);
+        
+    }
 }
